@@ -51,7 +51,7 @@ If you wish to fork this project and use it for your own institution:
 
 ## 📄 Credits & License
 
-* **Developed by:** Microbiology Department, L. D. Sonawane College, Kalyan.
+* **Developed by:** Vishal Bhoir.
 * **Concept & Content:** Introductory Bioinformatics tutorials © 2026 by [Vishal Bhoir](https://linktr.ee/thebioway).
 * **License:** This project is licensed under the **CC BY-SA 4.0** (Creative Commons Attribution-ShareAlike 4.0 International) license.
 ```eof
