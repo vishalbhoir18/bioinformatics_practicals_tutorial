@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bioinformatics Practical Tutorial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Print styling: Hide UI elements and show all content for PDF export */
+        @media print {
+            body { background-color: white; }
+            #sidebar, #top-nav, .no-print, button { display: none !important; }
+            #main-content { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+            .module-section { display: block !important; page-break-inside: avoid; margin-bottom: 2rem; border: none; box-shadow: none; padding: 0;}
+            textarea, input { border: 1px solid #ccc !important; background: transparent !important; resize: none; }
+            .student-info-header { display: block !important; text-align: center; margin-bottom: 2rem; border: none; box-shadow: none; padding: 0; }
+        }
+
+        .student-info-header { display: block; background: white; padding: 1.5rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; margin-bottom: 2rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        .module-section { display: none; }
+        .module-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Checkbox styling */
+        .step-checkbox {
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            margin-top: 0.2rem;
+        }
+        .step-checkbox:checked {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+        .step-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .step-text { transition: color 0.2s; }
+        .step-checkbox:checked + .step-text {
+            color: #94a3b8;
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex overflow-hidden">
+
+    <aside id="sidebar" class="w-64 bg-slate-900 text-white flex-shrink-0 hidden md:flex flex-col h-full transition-transform duration-300 z-20 absolute md:relative">
+        <div class="p-6 border-b border-slate-700">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                Bioinfo Labs
+            </h1>
+            <p class="text-xs text-slate-400 mt-3 leading-relaxed">
+                For Undergraduate Microbiology course<br>
+                Developed by Microbiology Department,<br>
+                L. D. Sonawane College, Kalyan<br>
+                <a href="https://sites.google.com/view/ldscmicrobiology/home" target="_blank" class="text-blue-400 hover:underline break-all mt-1 block">https://sites.google.com/view/ldscmicrobiology/home</a>
+            </p>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4">
+            <ul id="nav-list" class="space-y-1 px-3">
+                <!-- Nav items generated via JS -->
+            </ul>
+        </nav>
+        
+        <div class="p-4 border-t border-slate-700">
+            <a href="https://drive.google.com/file/d/1doirtrUS9iKzzw_tWfqNTuJKocH2vuxV/view?usp=sharing" target="_blank" class="w-full mb-5 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2.5 px-3 rounded flex flex-col items-center justify-center gap-1.5 text-xs font-medium transition-colors border border-slate-600 text-center leading-snug shadow-sm">
+                <svg class="w-4 h-4 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                <span>Bioinformatics Practical Reference Manual</span>
+            </a>
+            
+            <div class="mb-2 flex justify-between text-xs text-slate-400">
+                <span>Overall Progress</span>
+                <span id="overall-progress-text">0%</span>
+            </div>
+            <div class="w-full bg-slate-700 rounded-full h-2">
+                <div id="overall-progress-bar" class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div class="mt-6 space-y-3">
+                <button onclick="window.print()" class="w-full bg-slate-700 hover:bg-slate-600 text-white py-2 rounded flex items-center justify-center gap-2 text-sm transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    Export as PDF
+                </button>
+                <button onclick="showSubmitModal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded flex items-center justify-center gap-2 text-sm transition-colors shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    Submit Report
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full relative w-full">
+        <header id="top-nav" class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center shrink-0">
+            <h1 class="text-lg font-bold">Bioinfo Labs</h1>
+            <button onclick="toggleMobileMenu()" class="p-1 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </header>
+
+        <!-- Dynamic Content Container -->
+        <div id="main-content" class="flex-1 overflow-y-auto p-4 md:p-8">
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="student-info-header">
+                    <h1 class="text-2xl md:text-3xl font-bold text-center mb-6 text-slate-800">Bioinformatics Practical Lab Report</h1>
+                    <div class="flex flex-col md:flex-row justify-between border-t border-slate-200 pt-4 gap-4 text-left">
+                        <div class="flex flex-col gap-1 flex-1">
+                            <label class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Student Name</label>
+                            <input type="text" id="student-name" class="border-b-2 border-slate-200 focus:border-blue-500 focus:outline-none w-full pb-1 text-slate-800 font-medium bg-transparent transition-colors" placeholder="Enter Full Name" oninput="saveData()">
+                        </div>
+                        <div class="flex flex-col gap-1 flex-1">
+                            <label class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Class / Batch</label>
+                            <input type="text" id="student-class" class="border-b-2 border-slate-200 focus:border-blue-500 focus:outline-none w-full pb-1 text-slate-800 font-medium bg-transparent transition-colors" placeholder="e.g. BSc Microbiology" oninput="saveData()">
+                        </div>
+                        <div class="flex flex-col gap-1 flex-1">
+                            <label class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Roll Number</label>
+                            <input type="text" id="student-roll" class="border-b-2 border-slate-200 focus:border-blue-500 focus:outline-none w-full pb-1 text-slate-800 font-medium bg-transparent transition-colors" placeholder="Enter Roll No." oninput="saveData()">
+                        </div>
+                    </div>
+                </div>
+
+                <section id="module-1" class="module-section bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 active">
+                    <span class="text-blue-600 font-semibold text-sm tracking-wider uppercase mb-2 block">Experiment 1</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Database Exploration (NCBI)</h2>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-8">
+                        <h3 class="font-bold text-blue-900 mb-1">Objective</h3>
+                        <p class="text-blue-800 text-sm md:text-base">Navigate the National Center for Biotechnology Information (NCBI) and catalog its core services. NCBI is your "one-stop shop" for standardized biological data.</p>
+                    </div>
+
+                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Step-by-Step Procedure</h3>
+                    <div class="space-y-4 mb-8" id="steps-container-1">
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="1" data-step="1" onchange="saveData()">
+                            <span class="step-text pt-0.5">Open your web browser and navigate to the NCBI homepage: <a href="https://www.ncbi.nlm.nih.gov/" target="_blank" class="text-blue-600 hover:underline">https://www.ncbi.nlm.nih.gov/</a></span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="1" data-step="2" onchange="saveData()">
+                            <span class="step-text pt-0.5">On the left side or top menu, locate and click on <strong>"All Resources"</strong>.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="1" data-step="3" onchange="saveData()">
+                            <span class="step-text pt-0.5">Explore the various Services, Software tools and Databases: For example <strong>PubMed</strong> (literature), <strong>BLAST</strong> (sequence alignment), and <strong>Protein Database (PDB)</strong> (3D structures).</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="1" data-step="4" onchange="saveData()">
+                            <span class="step-text pt-0.5">Take a screenshot of the NCBI homepage for your practical record.</span>
+                        </label>
+                    </div>
+
+                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Your Interpretation & Record</h3>
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200">
+                        <p class="text-sm text-slate-600 mb-3 italic">List three databases you found under the "All Resources" tab and briefly describe what kind of data they store:</p>
+                        <textarea id="m1-input-1" class="w-full h-32 p-3 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow" placeholder="1. Database Name: Description...&#10;2. Database Name: Description...&#10;3. Database Name: Description..." oninput="saveData()"></textarea>
+                    </div>
+                </section>
+
+                <section id="module-2" class="module-section bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+                    <span class="text-blue-600 font-semibold text-sm tracking-wider uppercase mb-2 block">Experiment 2</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Sequence Retrieval (FASTA)</h2>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-8">
+                        <h3 class="font-bold text-blue-900 mb-1">Objective</h3>
+                        <p class="text-blue-800 text-sm md:text-base">Retrieve a nucleotide sequence in the universal FASTA format. This text-based format is required by almost all bioinformatics software.</p>
+                    </div>
+
+                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Step-by-Step Procedure</h3>
+                    <div class="space-y-4 mb-8" id="steps-container-2">
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="2" data-step="1" onchange="saveData()">
+                            <span class="step-text pt-0.5">On the NCBI homepage, use the search dropdown menu next to the search bar and select <strong>Nucleotide</strong>.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="2" data-step="2" onchange="saveData()">
+                            <span class="step-text pt-0.5">Type a specific gene and organism (e.g., <code>ITS1 Candida albicans</code>) and hit <strong>Search</strong>.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="2" data-step="3" onchange="saveData()">
+                            <span class="step-text pt-0.5">Click on a relevant entry to open the GenBank record (ensure it is a RefSeq or complete sequence).</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="2" data-step="4" onchange="saveData()">
+                            <span class="step-text pt-0.5">Click the <strong>"FASTA"</strong> link located at the top-left of the sequence display.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="2" data-step="5" onchange="saveData()">
+                            <span class="step-text pt-0.5">Copy the entire sequence, including the <code>></code> symbol at the beginning, and save it in a text editor (like Notepad).</span>
+                        </label>
+                    </div>
+                    
+                    <p class="mb-8 text-sm text-slate-600 italic">(Note: Take the screenshot/s for your practical record)</p>
+
+                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Your Interpretation & Record</h3>
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-4">
+                        <p class="text-sm text-slate-600 italic">Paste the required information based on the sequence you retrieved:</p>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">Header (The first line starting with >):</label>
+                            <input type="text" id="m2-input-1" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder=">gi|...|..." oninput="saveData()">
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="flex-1">
+                                <label class="block text-sm font-semibold mb-1">Accession Number:</label>
+                                <input type="text" id="m2-input-2" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. NM_001..." oninput="saveData()">
+                            </div>
+                            <div class="flex-1">
+                                <label class="block text-sm font-semibold mb-1">Total Length (bp):</label>
+                                <input type="text" id="m2-input-3" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. 1543 bp" oninput="saveData()">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="module-3" class="module-section bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+                    <span class="text-blue-600 font-semibold text-sm tracking-wider uppercase mb-2 block">Experiment 3</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Similarity Searching (BLAST)</h2>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-8">
+                        <h3 class="font-bold text-blue-900 mb-1">Objective</h3>
+                        <p class="text-blue-800 text-sm md:text-base">Compare your unknown or query sequence against a massive database to find regions of local similarity, discovering homologous genes or identifying species.</p>
+                    </div>
+
+                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Step-by-Step Procedure</h3>
+                    <div class="space-y-4 mb-8" id="steps-container-3">
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="3" data-step="1" onchange="saveData()">
+                            <span class="step-text pt-0.5">Go to the NCBI BLAST page: <a href="https://blast.ncbi.nlm.nih.gov/" target="_blank" class="text-blue-600 hover:underline">https://blast.ncbi.nlm.nih.gov/</a></span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="3" data-step="2" onchange="saveData()">
+                            <span class="step-text pt-0.5">Click on <strong>Nucleotide BLAST (blastn)</strong>.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="3" data-step="3" onchange="saveData()">
+                            <span class="step-text pt-0.5">In the "Enter Query Sequence" box, paste the FASTA sequence you saved in Experiment 2.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="3" data-step="4" onchange="saveData()">
+                            <span class="step-text pt-0.5">Scroll down to "Choose Search Set" and ensure the database is set to <strong>Nucleotide collection (nr/nt)</strong>.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="3" data-step="5" onchange="saveData()">
+                            <span class="step-text pt-0.5">Click the blue <strong>BLAST</strong> button and wait for results. Scroll down to the "Descriptions" tab to view top hits.</span>
+                        </label>
+                    </div>
+                    
+                    <p class="mb-8 text-sm text-slate-600 italic">(Note: Take the screenshot/s for your practical record)</p>
+
+                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Your Interpretation & Record</h3>
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-4">
+                        <p class="text-sm text-slate-600 italic">Identify the top match for your sequence and record the statistical values:</p>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">Top Matched Organism/Sequence:</label>
+                            <input type="text" id="m3-input-1" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Description of the highest matched subject..." oninput="saveData()">
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <div class="flex-1">
+                                <label class="block text-sm font-semibold mb-1">E-value (Expectation value):</label>
+                                <input type="text" id="m3-input-2" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. 0.0" oninput="saveData()">
+                            </div>
+                            <div class="flex-1">
+                                <label class="block text-sm font-semibold mb-1">Percent Identity:</label>
+                                <input type="text" id="m3-input-3" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. 99.8%" oninput="saveData()">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">Conclusion:</label>
+                            <textarea id="m3-input-4" class="w-full h-20 p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Is your sequence highly related (>98%) to the matched subject? What does the E-value signify here?" oninput="saveData()"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="module-4" class="module-section bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+                    <span class="text-blue-600 font-semibold text-sm tracking-wider uppercase mb-2 block">Experiment 4</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Multiple Sequence Alignment (MSA)</h2>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-8">
+                        <h3 class="font-bold text-blue-900 mb-1">Objective</h3>
+                        <p class="text-blue-800 text-sm md:text-base">Align three or more sequences to find conserved functional sites (essential regions) and variations (mutations/gaps) to infer homology.</p>
+                    </div>
+
+                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Step-by-Step Procedure</h3>
+                    <div class="space-y-4 mb-8" id="steps-container-4">
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="4" data-step="1" onchange="saveData()">
+                            <span class="step-text pt-0.5">Retrieve 3-4 FASTA sequences of the same gene from different species (e.g., 18S rRNA from different <em>Candida</em> species) and compile them in one text file.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="4" data-step="2" onchange="saveData()">
+                            <span class="step-text pt-0.5">Go to the EBI MSA portal: <a href="http://www.ebi.ac.uk/Tools/msa/" target="_blank" class="text-blue-600 hover:underline">http://www.ebi.ac.uk/Tools/msa/</a></span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="4" data-step="3" onchange="saveData()">
+                            <span class="step-text pt-0.5">Select the <strong>Clustal Omega</strong> tool.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="4" data-step="4" onchange="saveData()">
+                            <span class="step-text pt-0.5">Choose <strong>DNA</strong> from the sequence type dropdown.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="4" data-step="5" onchange="saveData()">
+                            <span class="step-text pt-0.5">Paste all your FASTA sequences into the input box and click <strong>Submit</strong>. Observe the vertically stacked alignment output.</span>
+                        </label>
+                    </div>
+                    
+                    <p class="mb-8 text-sm text-slate-600 italic">(Note: Take the screenshot/s for your practical record)</p>
+
+                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Your Interpretation & Record</h3>
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-4">
+                        <p class="text-sm text-slate-600 italic">Analyze the alignment output consensus symbols:</p>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">What does an asterisk (*) at the bottom of a column indicate?</label>
+                            <textarea id="m4-input-1" class="w-full h-16 p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Your interpretation..." oninput="saveData()"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">Did you find any gaps (dashes) in the alignment? What do these gaps represent in an evolutionary context?</label>
+                            <textarea id="m4-input-2" class="w-full h-24 p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Discuss insertions, deletions, or evolutionary mutations..." oninput="saveData()"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="module-5" class="module-section bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+                    <span class="text-blue-600 font-semibold text-sm tracking-wider uppercase mb-2 block">Experiment 5</span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Phylogenetic Tree Construction</h2>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-8">
+                        <h3 class="font-bold text-blue-900 mb-1">Objective</h3>
+                        <p class="text-blue-800 text-sm md:text-base">Visualize the evolutionary relationships and genetic divergence between your aligned sequences using a branching cladogram.</p>
+                    </div>
+
+                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Step-by-Step Procedure</h3>
+                    <div class="space-y-4 mb-8" id="steps-container-5">
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="5" data-step="1" onchange="saveData()">
+                            <span class="step-text pt-0.5">Navigate to the Phylogeny website: <a href="http://www.phylogeny.fr/" target="_blank" class="text-blue-600 hover:underline">http://www.phylogeny.fr/</a></span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="5" data-step="2" onchange="saveData()">
+                            <span class="step-text pt-0.5">Click on the <strong>"One click"</strong> mode from the homepage.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="5" data-step="3" onchange="saveData()">
+                            <span class="step-text pt-0.5">Paste the same group of multiple FASTA sequences you used in the MSA experiment.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="5" data-step="4" onchange="saveData()">
+                            <span class="step-text pt-0.5">Give your experiment a title and click <strong>Submit</strong>.</span>
+                        </label>
+                        <label class="flex items-start gap-3 group cursor-pointer">
+                            <input type="checkbox" class="step-checkbox" data-module="5" data-step="5" onchange="saveData()">
+                            <span class="step-text pt-0.5">Wait for the pipeline to generate the tree and analyze the branching diagram.</span>
+                        </label>
+                    </div>
+                    
+                    <p class="mb-8 text-sm text-slate-600 italic">(Note: Take the screenshot/s for your practical record)</p>
+
+                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Your Interpretation & Record</h3>
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-4">
+                        <p class="text-sm text-slate-600 italic">Analyze the generated branching diagram (cladogram):</p>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">Which two species/strains share the most recent common ancestor (are on the closest branches)?</label>
+                            <input type="text" id="m5-input-1" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Species A and Species B..." oninput="saveData()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">What does a shorter branch length between two organisms suggest about their genetic divergence?</label>
+                            <textarea id="m5-input-2" class="w-full h-24 p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Discuss genetic similarity and evolutionary time..." oninput="saveData()"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Navigation Buttons (Bottom) -->
+                <div class="no-print flex justify-between items-center mt-8 pt-4 border-t border-slate-200">
+                    <button id="prev-btn" onclick="navigate(-1)" class="px-5 py-2 rounded-lg font-medium text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        &larr; Previous
+                    </button>
+                    <div id="save-indicator" class="text-sm text-green-600 opacity-0 transition-opacity flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Saved
+                    </div>
+                    <button id="next-btn" onclick="navigate(1)" class="px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next &rarr;
+                    </button>
+                </div>
+                
+                <footer class="no-print text-center text-xs text-slate-500 mt-12 pb-6 border-t border-slate-200 pt-6">
+                    <p id="end-tutorial-text" class="mb-2 hidden font-medium text-slate-700">End of Practical Tutorial. All data is saved automatically in your browser.</p>
+                    <p>Introductory Bioinformatics tutorials &copy; 2026 by <a href="https://linktr.ee/thebioway" target="_blank" class="text-blue-500 hover:underline">Vishal Bhoir</a> is licensed under CC BY-SA 4.0</p>
+                </footer>
+
+            </div>
+        </div>
+        
+        <!-- Mobile Sidebar Overlay -->
+        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden" onclick="toggleMobileMenu()"></div>
+
+        <!-- Submit Instructions Modal -->
+        <div id="submit-modal" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 no-print transition-opacity">
+            <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 transform transition-all">
+                <div class="flex items-center gap-3 mb-4 text-blue-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    <h3 class="text-xl font-bold text-slate-900">Submit Your Report</h3>
+                </div>
+                <p class="text-slate-600 text-sm mb-4">Follow these exact steps to submit your work for grading:</p>
+                
+                <div class="bg-slate-50 rounded-lg p-4 mb-6 border border-slate-200">
+                    <ol class="list-decimal list-inside text-sm text-slate-700 space-y-3">
+                        <li>Make sure your Name and Roll Number are filled out at the top of the page.</li>
+                        <li>Click <strong>Export as PDF</strong> in the sidebar and save the PDF file to your computer/phone.</li>
+                        <li>Click the button below to open the Submission Form.</li>
+                        <li><strong>Crucial:</strong> Upload the PDF you just saved into the form and submit!</li>
+                    </ol>
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <button onclick="closeSubmitModal()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Cancel</button>
+                    <button onclick="openGoogleForm()" class="px-5 py-2 text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors shadow-sm">Open Submission Form</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const modules = [
+            { id: 1, title: "Database Exp.", fullTitle: "Database Exploration (NCBI)" },
+            { id: 2, title: "Seq. Retrieval", fullTitle: "Sequence Retrieval (FASTA)" },
+            { id: 3, title: "BLAST Search", fullTitle: "Similarity Searching (BLAST)" },
+            { id: 4, title: "Multiple Align", fullTitle: "Multiple Sequence Alignment (MSA)" },
+            { id: 5, title: "Phylogenetics", fullTitle: "Phylogenetic Tree Construction" }
+        ];
+
+        let currentModuleIndex = 0;
+        let saveTimeout;
+
+        // Initialize App
+        function init() {
+            renderSidebar();
+            loadData();
+            showModule(currentModuleIndex);
+            updateProgress();
+        }
+
+        // Render Sidebar Menu items
+        function renderSidebar() {
+            const navList = document.getElementById('nav-list');
+            navList.innerHTML = '';
+            
+            modules.forEach((mod, index) => {
+                const li = document.createElement('li');
+                li.className = `cursor-pointer rounded-lg px-3 py-2.5 text-sm transition-colors flex items-center justify-between ${index === currentModuleIndex ? 'bg-blue-600 text-white font-medium shadow-md' : 'text-slate-300 hover:bg-slate-800'}`;
+                li.onclick = () => {
+                    showModule(index);
+                    if(window.innerWidth < 768) toggleMobileMenu();
+                };
+                
+                // Add a completion indicator circle
+                const indicator = document.createElement('div');
+                indicator.id = `nav-indicator-${mod.id}`;
+                indicator.className = `w-2 h-2 rounded-full ${isModuleComplete(mod.id) ? 'bg-green-400' : 'bg-slate-600'}`;
+                
+                const textSpan = document.createElement('span');
+                textSpan.innerText = `${mod.id}. ${mod.title}`;
+                
+                li.appendChild(textSpan);
+                li.appendChild(indicator);
+                navList.appendChild(li);
+            });
+        }
+
+        // Show a specific module
+        function showModule(index) {
+            // Hide all modules
+            document.querySelectorAll('.module-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show selected
+            currentModuleIndex = index;
+            document.getElementById(`module-${modules[index].id}`).classList.add('active');
+            
+            // Update UI
+            renderSidebar();
+            updateNavButtons();
+            
+            // Toggle End of Tutorial text
+            const endText = document.getElementById('end-tutorial-text');
+            if (endText) {
+                if (index === modules.length - 1) {
+                    endText.classList.remove('hidden');
+                } else {
+                    endText.classList.add('hidden');
+                }
+            }
+            
+            // Scroll to top
+            document.getElementById('main-content').scrollTop = 0;
+        }
+
+        // Handle Next/Prev buttons
+        function navigate(direction) {
+            const newIndex = currentModuleIndex + direction;
+            if (newIndex >= 0 && newIndex < modules.length) {
+                showModule(newIndex);
+            }
+        }
+
+        // Update Next/Prev button states
+        function updateNavButtons() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            prevBtn.disabled = currentModuleIndex === 0;
+            nextBtn.disabled = currentModuleIndex === modules.length - 1;
+        }
+
+        // Toggle mobile sidebar
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('absolute', 'inset-y-0', 'left-0');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('absolute', 'inset-y-0', 'left-0');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        // Check if a module's checkboxes are all ticked
+        function isModuleComplete(moduleId) {
+            const checkboxes = document.querySelectorAll(`input[data-module="${moduleId}"]`);
+            if (checkboxes.length === 0) return false;
+            let complete = true;
+            checkboxes.forEach(cb => { if(!cb.checked) complete = false; });
+            return complete;
+        }
+
+        // Update overall progress bar
+        function updateProgress() {
+            const allCheckboxes = document.querySelectorAll('.step-checkbox');
+            let checkedCount = 0;
+            
+            allCheckboxes.forEach(cb => {
+                if(cb.checked) checkedCount++;
+            });
+
+            const percentage = allCheckboxes.length > 0 ? Math.round((checkedCount / allCheckboxes.length) * 100) : 0;
+            
+            document.getElementById('overall-progress-bar').style.width = `${percentage}%`;
+            document.getElementById('overall-progress-text').innerText = `${percentage}%`;
+            
+            // Update sidebar indicators
+            modules.forEach(mod => {
+                const indicator = document.getElementById(`nav-indicator-${mod.id}`);
+                if (indicator) {
+                    indicator.className = `w-2 h-2 rounded-full ${isModuleComplete(mod.id) ? 'bg-green-400' : 'bg-slate-600'}`;
+                }
+            });
+        }
+
+        // Save data to localStorage (with debounce)
+        function saveData() {
+            clearTimeout(saveTimeout);
+            
+            saveTimeout = setTimeout(() => {
+                const data = {
+                    checkboxes: {},
+                    inputs: {}
+                };
+
+                // Save checkboxes
+                document.querySelectorAll('.step-checkbox').forEach(cb => {
+                    const id = `m${cb.getAttribute('data-module')}s${cb.getAttribute('data-step')}`;
+                    data.checkboxes[id] = cb.checked;
+                });
+
+                // Save text inputs and textareas
+                document.querySelectorAll('input[type="text"], textarea').forEach(input => {
+                    if(input.id) {
+                        data.inputs[input.id] = input.value;
+                    }
+                });
+
+                localStorage.setItem('bioinfo_tutorial_data', JSON.stringify(data));
+                updateProgress();
+                
+                // Show "Saved" toast indicator
+                const indicator = document.getElementById('save-indicator');
+                indicator.style.opacity = '1';
+                setTimeout(() => { indicator.style.opacity = '0'; }, 2000);
+                
+            }, 500);
+        }
+
+        // Load data from localStorage
+        function loadData() {
+            const savedStr = localStorage.getItem('bioinfo_tutorial_data');
+            if (!savedStr) return;
+            
+            try {
+                const data = JSON.parse(savedStr);
+                
+                // Restore checkboxes
+                document.querySelectorAll('.step-checkbox').forEach(cb => {
+                    const id = `m${cb.getAttribute('data-module')}s${cb.getAttribute('data-step')}`;
+                    if (data.checkboxes[id]) {
+                        cb.checked = data.checkboxes[id];
+                    }
+                });
+
+                // Restore inputs
+                document.querySelectorAll('input[type="text"], textarea').forEach(input => {
+                    if (input.id && data.inputs[input.id]) {
+                        input.value = data.inputs[input.id];
+                    }
+                });
+            } catch(e) {
+                console.error("Error loading saved data", e);
+            }
+        }
+
+        // Run setup on load
+        window.addEventListener('DOMContentLoaded', init);
+
+        // --- Report Submission Logic ---
+        
+        function showSubmitModal() {
+            document.getElementById('submit-modal').classList.remove('hidden');
+        }
+
+        function closeSubmitModal() {
+            document.getElementById('submit-modal').classList.add('hidden');
+        }
+
+        function openGoogleForm() {
+            // Open the Google Form in a new tab
+            window.open('https://docs.google.com/forms/d/e/1FAIpQLSfbZaRpW1Ax32t2fop2Fq5_iP_L8LwrJLWEuRX-otYbVHmQMA/viewform', '_blank');
+            // Close the modal after triggering
+            closeSubmitModal();
+        }
+
+    </script>
+</body>
+</html>
