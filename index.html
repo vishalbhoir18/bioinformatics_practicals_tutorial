@@ -7,84 +7,63 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
-        
-        /* Custom scrollbar */
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Print styling: Hide UI elements and show all content for PDF export */
-        @media print {
-            /* Force the document to expand to its full height, overriding the app's scrolling */
-            body, html { height: auto !important; overflow: visible !important; display: block !important; background-color: white !important; }
-            main, #main-content { display: block !important; height: auto !important; overflow: visible !important; width: 100% !important; margin: 0 !important; padding: 0 !important; position: static !important; }
-            .max-w-4xl { max-w: 100% !important; }
-            
-            /* Hide menus and popups */
-            #sidebar, #top-nav, .no-print, button, #mobile-overlay, #submit-modal { display: none !important; }
-            
-            /* Show ALL modules and format spacing */
-            .module-section { display: block !important; page-break-inside: avoid; margin-bottom: 3rem !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
-            .student-info-header { display: block !important; margin-bottom: 3rem !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
-            
-            /* Format input fields to look like a clean, professional worksheet */
-            textarea, input[type="text"] { border: none !important; border-bottom: 1px solid #94a3b8 !important; background: transparent !important; resize: none; color: black !important; border-radius: 0 !important; box-shadow: none !important; }
-            textarea { height: 100px !important; }
-            
-            /* Hide the checkboxes but keep the procedure text */
-            .step-checkbox { display: none !important; }
-            .step-text { color: black !important; text-decoration: none !important; }
-            
-            /* Set print margins */
-            @page { margin: 1.5cm; }
-        }
+        a.link { color: #2563eb; text-decoration: none; word-break: break-word; }
+        a.link:hover { text-decoration: underline; }
+        code { background: #f1f5f9; padding: 0.05rem 0.3rem; border-radius: 0.25rem; font-size: 0.9em; }
+        pre.fasta { background: #0f172a; color: #e2e8f0; padding: 0.9rem 1rem; border-radius: 0.5rem; font-size: 0.8rem; overflow-x: auto; white-space: pre; }
+        pre.fasta .hdr { color: #fbbf24; }
 
-        .student-info-header { display: block; background: white; padding: 1.5rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; margin-bottom: 2rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        .student-info-header { display: block; background: white; padding: 1.5rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; margin-bottom: 2rem; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
         .module-section { display: none; }
         .module-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Checkbox styling */
-        .step-checkbox {
-            appearance: none;
-            width: 1.25rem;
-            height: 1.25rem;
-            border: 2px solid #cbd5e1;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.2s;
-            flex-shrink: 0;
-            margin-top: 0.2rem;
-        }
-        .step-checkbox:checked {
-            background-color: #3b82f6;
-            border-color: #3b82f6;
-        }
-        .step-checkbox:checked::after {
-            content: '';
-            position: absolute;
-            left: 5px;
-            top: 2px;
-            width: 5px;
-            height: 10px;
-            border: solid white;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
+        .step-checkbox { appearance: none; width: 1.25rem; height: 1.25rem; border: 2px solid #cbd5e1; border-radius: 0.25rem; cursor: pointer; position: relative; transition: all 0.2s; flex-shrink: 0; margin-top: 0.2rem; }
+        .step-checkbox:checked { background-color: #3b82f6; border-color: #3b82f6; }
+        .step-checkbox:checked::after { content: ''; position: absolute; left: 5px; top: 2px; width: 5px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); }
         .step-text { transition: color 0.2s; }
-        .step-checkbox:checked + .step-text {
-            color: #94a3b8;
-            text-decoration: line-through;
+        .step-checkbox:checked + .step-text { color: #94a3b8; }
+
+        details.hint > summary { cursor: pointer; list-style: none; }
+        details.hint > summary::-webkit-details-marker { display: none; }
+
+        .tbl { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+        .tbl th, .tbl td { border: 1px solid #e2e8f0; padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+        .tbl th { background: #f8fafc; font-weight: 600; color: #334155; }
+
+        .quiz-opt.correct { background: #dcfce7; border-color: #22c55e; }
+        .quiz-opt.wrong { background: #fee2e2; border-color: #ef4444; }
+
+        .print-copy { display: none; }
+
+        @media print {
+            body, html { height: auto !important; overflow: visible !important; display: block !important; background-color: white !important; }
+            main, #main-content { display: block !important; height: auto !important; overflow: visible !important; width: 100% !important; margin: 0 !important; padding: 0 !important; position: static !important; }
+            .max-w-4xl { max-width: 100% !important; }
+
+            #sidebar, #top-nav, .no-print, button, #mobile-overlay, #submit-modal, #glossary-modal, details.hint { display: none !important; }
+
+            .module-section { display: block !important; margin-bottom: 2rem !important; border: none !important; box-shadow: none !important; padding: 0 !important; animation: none !important; }
+            .module-section.print-break { break-before: page; }
+            .module-section.no-print { display: none !important; }
+            .student-info-header { display: block !important; margin-bottom: 2rem !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+
+            input[type="text"] { border: none !important; border-bottom: 1px solid #94a3b8 !important; background: transparent !important; color: black !important; border-radius: 0 !important; box-shadow: none !important; }
+            /* Textareas are replaced by a full-height copy so long answers are never cut off */
+            textarea { display: none !important; }
+            .print-copy { display: block !important; white-space: pre-wrap; border-bottom: 1px solid #94a3b8; min-height: 2.5rem; padding: 0.25rem 0; color: black; }
+
+            .step-checkbox { display: none !important; }
+            .step-text { color: black !important; }
+            .record-box { background: white !important; border: none !important; padding: 0 !important; }
+            @page { margin: 1.5cm; }
         }
     </style>
 </head>
@@ -92,29 +71,29 @@
 
     <aside id="sidebar" class="w-64 bg-slate-900 text-white flex-shrink-0 hidden md:flex flex-col h-full transition-transform duration-300 z-20 absolute md:relative">
         <div class="p-6 border-b border-slate-700">
-            <h1 class="text-xl font-bold flex items-center gap-2">
-                Bioinfo Labs
-            </h1>
+            <h1 class="text-xl font-bold flex items-center gap-2">Bioinfo Labs</h1>
             <p class="text-xs text-slate-400 mt-3 leading-relaxed">
                 For Undergraduate Microbiology course<br>
                 Developed by Microbiology Department,<br>
                 L. D. Sonawane College, Kalyan<br>
-                <a href="https://sites.google.com/view/ldscmicrobiology/home" target="_blank" class="text-blue-400 hover:underline break-all mt-1 block">https://sites.google.com/view/ldscmicrobiology/home</a>
+                <a href="https://sites.google.com/view/ldscmicrobiology/home" target="_blank" rel="noopener" class="text-blue-400 hover:underline break-all mt-1 block">https://sites.google.com/view/ldscmicrobiology/home</a>
             </p>
         </div>
-        
+
         <nav class="flex-1 overflow-y-auto py-4">
-            <ul id="nav-list" class="space-y-1 px-3">
-                <!-- Nav items generated via JS -->
-            </ul>
+            <ul id="nav-list" class="space-y-1 px-3"></ul>
         </nav>
-        
+
         <div class="p-4 border-t border-slate-700">
-            <a href="https://drive.google.com/file/d/1doirtrUS9iKzzw_tWfqNTuJKocH2vuxV/view?usp=sharing" target="_blank" class="w-full mb-5 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2.5 px-3 rounded flex flex-col items-center justify-center gap-1.5 text-xs font-medium transition-colors border border-slate-600 text-center leading-snug shadow-sm">
+            <a href="https://drive.google.com/file/d/1doirtrUS9iKzzw_tWfqNTuJKocH2vuxV/view?usp=sharing" target="_blank" rel="noopener" class="w-full mb-3 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2.5 px-3 rounded flex flex-col items-center justify-center gap-1.5 text-xs font-medium transition-colors border border-slate-600 text-center leading-snug shadow-sm">
                 <svg class="w-4 h-4 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 <span>Bioinformatics Practical Reference Manual</span>
             </a>
-            
+            <button onclick="showGlossary()" class="w-full mb-5 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded flex items-center justify-center gap-2 text-xs font-medium transition-colors border border-slate-600">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                Glossary of Terms
+            </button>
+
             <div class="mb-2 flex justify-between text-xs text-slate-400">
                 <span>Overall Progress</span>
                 <span id="overall-progress-text">0%</span>
@@ -138,558 +117,890 @@
     <main class="flex-1 flex flex-col h-full relative w-full">
         <header id="top-nav" class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center shrink-0">
             <h1 class="text-lg font-bold">Bioinfo Labs</h1>
-            <button onclick="toggleMobileMenu()" class="p-1 focus:outline-none">
+            <button onclick="toggleMobileMenu()" class="p-1 focus:outline-none" aria-label="Open menu">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
         </header>
 
-        <!-- Dynamic Content Container -->
         <div id="main-content" class="flex-1 overflow-y-auto p-4 md:p-8">
-            
             <div class="max-w-4xl mx-auto">
                 <div class="student-info-header">
                     <h1 class="text-2xl md:text-3xl font-bold text-center mb-6 text-slate-800">Bioinformatics Practical Lab Report</h1>
                     <div class="flex flex-col md:flex-row justify-between border-t border-slate-200 pt-4 gap-4 text-left">
                         <div class="flex flex-col gap-1 flex-1">
-                            <label class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Student Name</label>
-                            <input type="text" id="student-name" class="border-b-2 border-slate-200 focus:border-blue-500 focus:outline-none w-full pb-1 text-slate-800 font-medium bg-transparent transition-colors" placeholder="Enter Full Name" oninput="saveData()">
+                            <label for="student-name" class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Student Name</label>
+                            <input type="text" id="student-name" class="border-b-2 border-slate-200 focus:border-blue-500 focus:outline-none w-full pb-1 text-slate-800 font-medium bg-transparent transition-colors" placeholder="Enter Full Name">
                         </div>
                         <div class="flex flex-col gap-1 flex-1">
-                            <label class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Class / Batch</label>
-                            <input type="text" id="student-class" class="border-b-2 border-slate-200 focus:border-blue-500 focus:outline-none w-full pb-1 text-slate-800 font-medium bg-transparent transition-colors" placeholder="e.g. BSc Microbiology" oninput="saveData()">
+                            <label for="student-class" class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Class / Batch</label>
+                            <input type="text" id="student-class" class="border-b-2 border-slate-200 focus:border-blue-500 focus:outline-none w-full pb-1 text-slate-800 font-medium bg-transparent transition-colors" placeholder="e.g. TYBSc Microbiology">
                         </div>
                         <div class="flex flex-col gap-1 flex-1">
-                            <label class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Roll Number</label>
-                            <input type="text" id="student-roll" class="border-b-2 border-slate-200 focus:border-blue-500 focus:outline-none w-full pb-1 text-slate-800 font-medium bg-transparent transition-colors" placeholder="Enter Roll No." oninput="saveData()">
+                            <label for="student-roll" class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Roll Number</label>
+                            <input type="text" id="student-roll" class="border-b-2 border-slate-200 focus:border-blue-500 focus:outline-none w-full pb-1 text-slate-800 font-medium bg-transparent transition-colors" placeholder="Enter Roll No.">
                         </div>
                     </div>
                 </div>
 
-                <section id="module-1" class="module-section bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8 active">
-                    <span class="text-blue-600 font-semibold text-sm tracking-wider uppercase mb-2 block">Experiment 1</span>
-                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Database Exploration (NCBI)</h2>
-                    
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-8">
-                        <h3 class="font-bold text-blue-900 mb-1">Objective</h3>
-                        <p class="text-blue-800 text-sm md:text-base">Navigate the National Center for Biotechnology Information (NCBI) and catalog its core services. NCBI is your "one-stop shop" for standardized biological data.</p>
-                    </div>
+                <!-- Modules are rendered here from the MODULES data below -->
+                <div id="modules-container"></div>
 
-                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Step-by-Step Procedure</h3>
-                    <div class="space-y-4 mb-8" id="steps-container-1">
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="1" data-step="1" onchange="saveData()">
-                            <span class="step-text pt-0.5">Open your web browser and navigate to the NCBI homepage: <a href="https://www.ncbi.nlm.nih.gov/" target="_blank" class="text-blue-600 hover:underline">https://www.ncbi.nlm.nih.gov/</a></span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="1" data-step="2" onchange="saveData()">
-                            <span class="step-text pt-0.5">On the left side or top menu, locate and click on <strong>"All Resources"</strong>.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="1" data-step="3" onchange="saveData()">
-                            <span class="step-text pt-0.5">Explore the various Services, Software tools and Databases: For example <strong>PubMed</strong> (literature), <strong>BLAST</strong> (sequence alignment), and <strong>Protein Database (PDB)</strong> (3D structures).</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="1" data-step="4" onchange="saveData()">
-                            <span class="step-text pt-0.5">Take a screenshot of the NCBI homepage for your practical record.</span>
-                        </label>
-                    </div>
-
-                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Your Interpretation & Record</h3>
-                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200">
-                        <p class="text-sm text-slate-600 mb-3 italic">List three databases you found under the "All Resources" tab and briefly describe what kind of data they store:</p>
-                        <textarea id="m1-input-1" class="w-full h-32 p-3 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow" placeholder="1. Database Name: Description...&#10;2. Database Name: Description...&#10;3. Database Name: Description..." oninput="saveData()"></textarea>
-                    </div>
-                </section>
-
-                <section id="module-2" class="module-section bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
-                    <span class="text-blue-600 font-semibold text-sm tracking-wider uppercase mb-2 block">Experiment 2</span>
-                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Sequence Retrieval (FASTA)</h2>
-                    
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-8">
-                        <h3 class="font-bold text-blue-900 mb-1">Objective</h3>
-                        <p class="text-blue-800 text-sm md:text-base">Retrieve a nucleotide sequence in the universal FASTA format. This text-based format is required by almost all bioinformatics software.</p>
-                    </div>
-
-                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Step-by-Step Procedure</h3>
-                    <div class="space-y-4 mb-8" id="steps-container-2">
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="2" data-step="1" onchange="saveData()">
-                            <span class="step-text pt-0.5">On the NCBI homepage, use the search dropdown menu next to the search bar and select <strong>Nucleotide</strong>.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="2" data-step="2" onchange="saveData()">
-                            <span class="step-text pt-0.5">Type a specific gene and organism (e.g., <code>ITS1 Candida albicans</code>) and hit <strong>Search</strong>.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="2" data-step="3" onchange="saveData()">
-                            <span class="step-text pt-0.5">Click on a relevant entry to open the GenBank record (ensure it is a RefSeq or complete sequence).</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="2" data-step="4" onchange="saveData()">
-                            <span class="step-text pt-0.5">Click the <strong>"FASTA"</strong> link located at the top-left of the sequence display.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="2" data-step="5" onchange="saveData()">
-                            <span class="step-text pt-0.5">Copy the entire sequence, including the <code>></code> symbol at the beginning, and save it in a text editor (like Notepad).</span>
-                        </label>
-                    </div>
-                    
-                    <p class="mb-8 text-sm text-slate-600 italic">(Note: Take the screenshot/s for your practical record)</p>
-
-                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Your Interpretation & Record</h3>
-                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-4">
-                        <p class="text-sm text-slate-600 italic">Paste the required information based on the sequence you retrieved:</p>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold mb-1">Header (The first line starting with >):</label>
-                            <input type="text" id="m2-input-1" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder=">gi|...|..." oninput="saveData()">
-                        </div>
-                        <div class="flex flex-col md:flex-row gap-4">
-                            <div class="flex-1">
-                                <label class="block text-sm font-semibold mb-1">Accession Number:</label>
-                                <input type="text" id="m2-input-2" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. NM_001..." oninput="saveData()">
-                            </div>
-                            <div class="flex-1">
-                                <label class="block text-sm font-semibold mb-1">Total Length (bp):</label>
-                                <input type="text" id="m2-input-3" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. 1543 bp" oninput="saveData()">
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="module-3" class="module-section bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
-                    <span class="text-blue-600 font-semibold text-sm tracking-wider uppercase mb-2 block">Experiment 3</span>
-                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Similarity Searching (BLAST)</h2>
-                    
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-8">
-                        <h3 class="font-bold text-blue-900 mb-1">Objective</h3>
-                        <p class="text-blue-800 text-sm md:text-base">Compare your unknown or query sequence against a massive database to find regions of local similarity, discovering homologous genes or identifying species.</p>
-                    </div>
-
-                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Step-by-Step Procedure</h3>
-                    <div class="space-y-4 mb-8" id="steps-container-3">
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="3" data-step="1" onchange="saveData()">
-                            <span class="step-text pt-0.5">Go to the NCBI BLAST page: <a href="https://blast.ncbi.nlm.nih.gov/" target="_blank" class="text-blue-600 hover:underline">https://blast.ncbi.nlm.nih.gov/</a></span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="3" data-step="2" onchange="saveData()">
-                            <span class="step-text pt-0.5">Click on <strong>Nucleotide BLAST (blastn)</strong>.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="3" data-step="3" onchange="saveData()">
-                            <span class="step-text pt-0.5">In the "Enter Query Sequence" box, paste the FASTA sequence you saved in Experiment 2.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="3" data-step="4" onchange="saveData()">
-                            <span class="step-text pt-0.5">Scroll down to "Choose Search Set" and ensure the database is set to <strong>Nucleotide collection (nr/nt)</strong>.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="3" data-step="5" onchange="saveData()">
-                            <span class="step-text pt-0.5">Click the blue <strong>BLAST</strong> button and wait for results. Scroll down to the "Descriptions" tab to view top hits.</span>
-                        </label>
-                    </div>
-                    
-                    <p class="mb-8 text-sm text-slate-600 italic">(Note: Take the screenshot/s for your practical record)</p>
-
-                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Your Interpretation & Record</h3>
-                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-4">
-                        <p class="text-sm text-slate-600 italic">Identify the top match for your sequence and record the statistical values:</p>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold mb-1">Top Matched Organism/Sequence:</label>
-                            <input type="text" id="m3-input-1" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Description of the highest matched subject..." oninput="saveData()">
-                        </div>
-                        <div class="flex flex-col md:flex-row gap-4">
-                            <div class="flex-1">
-                                <label class="block text-sm font-semibold mb-1">E-value (Expectation value):</label>
-                                <input type="text" id="m3-input-2" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. 0.0" oninput="saveData()">
-                            </div>
-                            <div class="flex-1">
-                                <label class="block text-sm font-semibold mb-1">Percent Identity:</label>
-                                <input type="text" id="m3-input-3" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="e.g. 99.8%" oninput="saveData()">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold mb-1">Conclusion:</label>
-                            <textarea id="m3-input-4" class="w-full h-20 p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Is your sequence highly related (>98%) to the matched subject? What does the E-value signify here?" oninput="saveData()"></textarea>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="module-4" class="module-section bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
-                    <span class="text-blue-600 font-semibold text-sm tracking-wider uppercase mb-2 block">Experiment 4</span>
-                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Multiple Sequence Alignment (MSA)</h2>
-                    
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-8">
-                        <h3 class="font-bold text-blue-900 mb-1">Objective</h3>
-                        <p class="text-blue-800 text-sm md:text-base">Align three or more sequences to find conserved functional sites (essential regions) and variations (mutations/gaps) to infer homology.</p>
-                    </div>
-
-                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Step-by-Step Procedure</h3>
-                    <div class="space-y-4 mb-8" id="steps-container-4">
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="4" data-step="1" onchange="saveData()">
-                            <span class="step-text pt-0.5">Retrieve 3-4 FASTA sequences of the same gene from different species (e.g., 18S rRNA from different <em>Candida</em> species) and compile them in one text file.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="4" data-step="2" onchange="saveData()">
-                            <span class="step-text pt-0.5">Go to the EBI MSA portal: <a href="http://www.ebi.ac.uk/Tools/msa/" target="_blank" class="text-blue-600 hover:underline">http://www.ebi.ac.uk/Tools/msa/</a></span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="4" data-step="3" onchange="saveData()">
-                            <span class="step-text pt-0.5">Select the <strong>Clustal Omega</strong> tool.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="4" data-step="4" onchange="saveData()">
-                            <span class="step-text pt-0.5">Choose <strong>DNA</strong> from the sequence type dropdown.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="4" data-step="5" onchange="saveData()">
-                            <span class="step-text pt-0.5">Paste all your FASTA sequences into the input box and click <strong>Submit</strong>. Observe the vertically stacked alignment output.</span>
-                        </label>
-                    </div>
-                    
-                    <p class="mb-8 text-sm text-slate-600 italic">(Note: Take the screenshot/s for your practical record)</p>
-
-                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Your Interpretation & Record</h3>
-                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-4">
-                        <p class="text-sm text-slate-600 italic">Analyze the alignment output consensus symbols:</p>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold mb-1">What does an asterisk (*) at the bottom of a column indicate?</label>
-                            <textarea id="m4-input-1" class="w-full h-16 p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Your interpretation..." oninput="saveData()"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold mb-1">Did you find any gaps (dashes) in the alignment? What do these gaps represent in an evolutionary context?</label>
-                            <textarea id="m4-input-2" class="w-full h-24 p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Discuss insertions, deletions, or evolutionary mutations..." oninput="saveData()"></textarea>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="module-5" class="module-section bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
-                    <span class="text-blue-600 font-semibold text-sm tracking-wider uppercase mb-2 block">Experiment 5</span>
-                    <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Phylogenetic Tree Construction</h2>
-                    
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-8">
-                        <h3 class="font-bold text-blue-900 mb-1">Objective</h3>
-                        <p class="text-blue-800 text-sm md:text-base">Visualize the evolutionary relationships and genetic divergence between your aligned sequences using a branching cladogram.</p>
-                    </div>
-
-                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Step-by-Step Procedure</h3>
-                    <div class="space-y-4 mb-8" id="steps-container-5">
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="5" data-step="1" onchange="saveData()">
-                            <span class="step-text pt-0.5">Navigate to the Phylogeny website: <a href="http://www.phylogeny.fr/" target="_blank" class="text-blue-600 hover:underline">http://www.phylogeny.fr/</a></span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="5" data-step="2" onchange="saveData()">
-                            <span class="step-text pt-0.5">Click on the <strong>"One click"</strong> mode from the homepage.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="5" data-step="3" onchange="saveData()">
-                            <span class="step-text pt-0.5">Paste the same group of multiple FASTA sequences you used in the MSA experiment.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="5" data-step="4" onchange="saveData()">
-                            <span class="step-text pt-0.5">Give your experiment a title and click <strong>Submit</strong>.</span>
-                        </label>
-                        <label class="flex items-start gap-3 group cursor-pointer">
-                            <input type="checkbox" class="step-checkbox" data-module="5" data-step="5" onchange="saveData()">
-                            <span class="step-text pt-0.5">Wait for the pipeline to generate the tree and analyze the branching diagram.</span>
-                        </label>
-                    </div>
-                    
-                    <p class="mb-8 text-sm text-slate-600 italic">(Note: Take the screenshot/s for your practical record)</p>
-
-                    <h3 class="text-lg font-bold border-b pb-2 mb-4">Your Interpretation & Record</h3>
-                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-4">
-                        <p class="text-sm text-slate-600 italic">Analyze the generated branching diagram (cladogram):</p>
-                        
-                        <div>
-                            <label class="block text-sm font-semibold mb-1">Which two species/strains share the most recent common ancestor (are on the closest branches)?</label>
-                            <input type="text" id="m5-input-1" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Species A and Species B..." oninput="saveData()">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold mb-1">What does a shorter branch length between two organisms suggest about their genetic divergence?</label>
-                            <textarea id="m5-input-2" class="w-full h-24 p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Discuss genetic similarity and evolutionary time..." oninput="saveData()"></textarea>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Navigation Buttons (Bottom) -->
                 <div class="no-print flex justify-between items-center mt-8 pt-4 border-t border-slate-200">
-                    <button id="prev-btn" onclick="navigate(-1)" class="px-5 py-2 rounded-lg font-medium text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                        &larr; Previous
-                    </button>
+                    <button id="prev-btn" onclick="navigate(-1)" class="px-5 py-2 rounded-lg font-medium text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">&larr; Previous</button>
                     <div id="save-indicator" class="text-sm text-green-600 opacity-0 transition-opacity flex items-center gap-1">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                         Saved
                     </div>
-                    <button id="next-btn" onclick="navigate(1)" class="px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                        Next &rarr;
-                    </button>
+                    <button id="next-btn" onclick="navigate(1)" class="px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">Next &rarr;</button>
                 </div>
-                
-                <footer class="no-print text-center text-xs text-slate-500 mt-12 pb-6 border-t border-slate-200 pt-6">
-                    <p id="end-tutorial-text" class="mb-2 hidden font-medium text-slate-700">End of Practical Tutorial. All data is saved automatically in your browser.</p>
-                    <p>Introductory Bioinformatics tutorials &copy; 2026 by <a href="https://linktr.ee/thebioway" target="_blank" class="text-blue-500 hover:underline">Vishal Bhoir</a> is licensed under CC BY-SA 4.0</p>
-                </footer>
 
+                <footer class="no-print text-center text-xs text-slate-500 mt-12 pb-6 border-t border-slate-200 pt-6">
+                    <p id="end-tutorial-text" class="mb-2 hidden font-medium text-slate-700">End of Practical Tutorial. All data is saved automatically in this browser. Export your PDF and submit it.</p>
+                    <p>Introductory Bioinformatics tutorials &copy; 2026 by <a href="https://linktr.ee/thebioway" target="_blank" rel="noopener" class="text-blue-500 hover:underline">Vishal Bhoir</a> is licensed under CC BY-SA 4.0</p>
+                </footer>
             </div>
         </div>
-        
-        <!-- Mobile Sidebar Overlay -->
+
         <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden" onclick="toggleMobileMenu()"></div>
 
         <!-- Submit Instructions Modal -->
-        <div id="submit-modal" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 no-print transition-opacity">
-            <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 transform transition-all">
+        <div id="submit-modal" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 no-print">
+            <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
                 <div class="flex items-center gap-3 mb-4 text-blue-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     <h3 class="text-xl font-bold text-slate-900">Submit Your Report</h3>
                 </div>
                 <p class="text-slate-600 text-sm mb-4">Follow these exact steps to submit your work for grading:</p>
-                
                 <div class="bg-slate-50 rounded-lg p-4 mb-6 border border-slate-200">
                     <ol class="list-decimal list-inside text-sm text-slate-700 space-y-3">
                         <li>Make sure your Name and Roll Number are filled out at the top of the page.</li>
+                        <li>Make sure you have chosen your group's scenario in <strong>Practice Scenarios</strong>.</li>
                         <li>Click <strong>Export as PDF</strong> in the sidebar and save the PDF file to your computer/phone.</li>
                         <li>Click the button below to open the Submission Form.</li>
                         <li><strong>Crucial:</strong> Upload the PDF you just saved into the form and submit!</li>
                     </ol>
                 </div>
-
                 <div class="flex justify-end gap-3">
                     <button onclick="closeSubmitModal()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Cancel</button>
                     <button onclick="openGoogleForm()" class="px-5 py-2 text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors shadow-sm">Open Submission Form</button>
                 </div>
             </div>
         </div>
+
+        <!-- Glossary Modal -->
+        <div id="glossary-modal" class="fixed inset-0 bg-slate-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4 no-print" onclick="if(event.target===this) closeGlossary()">
+            <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 max-h-[85vh] flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-slate-900">Glossary of Terms</h3>
+                    <button onclick="closeGlossary()" class="text-slate-500 hover:text-slate-800 text-2xl leading-none" aria-label="Close glossary">&times;</button>
+                </div>
+                <input type="search" id="glossary-search" oninput="renderGlossary()" placeholder="Type a word, e.g. E-value" class="w-full p-2 mb-4 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <dl id="glossary-list" class="overflow-y-auto space-y-3 text-sm pr-2"></dl>
+            </div>
+        </div>
     </main>
 
     <script>
-        const modules = [
-            { id: 1, title: "Database Exp.", fullTitle: "Database Exploration (NCBI)" },
-            { id: 2, title: "Seq. Retrieval", fullTitle: "Sequence Retrieval (FASTA)" },
-            { id: 3, title: "BLAST Search", fullTitle: "Similarity Searching (BLAST)" },
-            { id: 4, title: "Multiple Align", fullTitle: "Multiple Sequence Alignment (MSA)" },
-            { id: 5, title: "Phylogenetics", fullTitle: "Phylogenetic Tree Construction" }
-        ];
-
-        let currentModuleIndex = 0;
-        let saveTimeout;
-
-        // Initialize App
-        function init() {
-            renderSidebar();
-            loadData();
-            showModule(currentModuleIndex);
-            updateProgress();
+    /* =====================================================================
+       TEACHER SETTINGS: edit this block only.
+       Before class, choose one record per slot (see README, "Preparing the
+       scenarios"). If you leave a slot as '', students see "Ask your teacher"
+       and type in the accession you give them.
+       ===================================================================== */
+    const CONFIG = {
+        formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfbZaRpW1Ax32t2fop2Fq5_iP_L8LwrJLWEuRX-otYbVHmQMA/viewform',
+        storageKey: 'bioinfo_tutorial_data',
+        accessions: {
+            mecC_protein: '',            // Scenario 2: one full-length mecC protein (NCBI Protein)
+            itsAlbicans: '',             // Scenario 3: NR_ ITS record from PRJNA177353
+            itsTropicalis: '',
+            itsParapsilosis: '',
+            itsGlabratus: '',            // Nakaseomyces glabratus (C. glabrata)
+            spikeAlpha: '',              // Scenario 4: spike protein, Pango B.1.1.7
+            spikeDelta: '',              //             spike protein, Pango B.1.617.2
+            spikeOmicron: ''             //             spike protein, Pango BA.1
         }
+    };
 
-        // Render Sidebar Menu items
-        function renderSidebar() {
-            const navList = document.getElementById('nav-list');
-            navList.innerHTML = '';
-            
-            modules.forEach((mod, index) => {
-                const li = document.createElement('li');
-                li.className = `cursor-pointer rounded-lg px-3 py-2.5 text-sm transition-colors flex items-center justify-between ${index === currentModuleIndex ? 'bg-blue-600 text-white font-medium shadow-md' : 'text-slate-300 hover:bg-slate-800'}`;
-                li.onclick = () => {
-                    showModule(index);
-                    if(window.innerWidth < 768) toggleMobileMenu();
-                };
-                
-                // Add a completion indicator circle
-                const indicator = document.createElement('div');
-                indicator.id = `nav-indicator-${mod.id}`;
-                indicator.className = `w-2 h-2 rounded-full ${isModuleComplete(mod.id) ? 'bg-green-400' : 'bg-slate-600'}`;
-                
-                const textSpan = document.createElement('span');
-                textSpan.innerText = `${mod.id}. ${mod.title}`;
-                
-                li.appendChild(textSpan);
-                li.appendChild(indicator);
-                navList.appendChild(li);
-            });
+    /* ---------- small HTML helpers ---------- */
+    const URLS = {
+        ncbi: 'https://www.ncbi.nlm.nih.gov/',
+        blast: 'https://blast.ncbi.nlm.nih.gov/Blast.cgi',
+        clustal: 'https://www.ebi.ac.uk/jdispatcher/msa/clustalo',
+        phylofr: 'http://www.phylogeny.fr/',
+        ngphylo: 'https://ngphylogeny.fr/',
+        ncbiVirus: 'https://www.ncbi.nlm.nih.gov/labs/virus/'
+    };
+    const ext = (url, text) => `<a href="${url}" target="_blank" rel="noopener" class="link">${text || url}</a>`;
+    const nuc = acc => ext(`https://www.ncbi.nlm.nih.gov/nuccore/${acc}`, acc);
+    const prot = acc => ext(`https://www.ncbi.nlm.nih.gov/protein/${acc}`, acc);
+    const uni = acc => ext(`https://www.uniprot.org/uniprotkb/${acc}`, `UniProt ${acc}`);
+    const uniFasta = acc => ext(`https://rest.uniprot.org/uniprotkb/${acc}.fasta`, `${acc} FASTA`);
+    // A teacher-chosen accession: a link if set, otherwise a prompt to ask
+    const teacherAcc = (key, db) => {
+        const acc = CONFIG.accessions[key];
+        if (acc) return db === 'protein' ? prot(acc) : nuc(acc);
+        return '<span class="text-amber-700 font-medium">Ask your teacher</span>';
+    };
+
+    /* =====================================================================
+       COURSE CONTENT
+       Each experiment follows the practical-journal layout students already
+       know: Aim, Principle, Procedure, Observations & Result.
+       Input ids (m1-input-1 ...) are kept from version 1 so saved work is kept.
+       ===================================================================== */
+    const SCENARIO1_TABLE = `
+        <div class="overflow-x-auto">
+        <table class="tbl">
+            <tr><th>Organism</th><th>Gram reaction</th><th>Accession</th><th>Role</th></tr>
+            <tr><td><em>Staphylococcus aureus</em> ATCC 12600</td><td>Positive</td><td>${nuc('NR_118997.2')}</td><td>Our "unknown" (query) for Exp 2 and 3</td></tr>
+            <tr><td><em>Bacillus subtilis</em> 168</td><td>Positive</td><td>${nuc('NR_102783')}</td><td>Gram-positive relative</td></tr>
+            <tr><td><em>Escherichia coli</em> U 5/41</td><td>Negative</td><td>${nuc('NR_024570.1')}</td><td>Gram-negative</td></tr>
+            <tr><td><em>Pseudomonas aeruginosa</em></td><td>Negative</td><td>${nuc('NR_026078.1')}</td><td>Gram-negative</td></tr>
+        </table>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">If NCBI shows a newer version number (for example .3 instead of .2), use the newest one.</p>`;
+
+    const MODULES = [
+    {
+        id: 0, nav: 'Start Here', label: 'Before You Begin', title: 'Start Here: Your Bioinformatics Toolkit',
+        noPrint: true,
+        aim: 'Understand what bioinformatics is, how the five experiments connect into one story, and set up your workspace.',
+        intro: `
+            <h3 class="text-lg font-bold border-b pb-2 mb-3">What is bioinformatics?</h3>
+            <p class="mb-4">Bioinformatics means <strong>using computers to store, search and compare biological data</strong>, mostly DNA, RNA and protein sequences. You already do the same kind of work at the lab bench. Only the tools are different:</p>
+            <div class="overflow-x-auto mb-8">
+            <table class="tbl">
+                <tr><th>In the wet lab you…</th><th>In bioinformatics you…</th><th>Experiment</th></tr>
+                <tr><td>Order a strain from a culture collection (ATCC, MTCC)</td><td>Look up a sequence in a database (NCBI GenBank)</td><td>1</td></tr>
+                <tr><td>Use the strain's catalogue number</td><td>Use the sequence's <strong>accession number</strong></td><td>2</td></tr>
+                <tr><td>Identify an isolate by matching biochemical tests to a chart</td><td>Identify a sequence by matching it to a database (<strong>BLAST</strong>)</td><td>3</td></tr>
+                <tr><td>Compare several isolates side by side</td><td>Line up several sequences column by column (<strong>MSA</strong>)</td><td>4</td></tr>
+                <tr><td>Classify organisms using Bergey's Manual</td><td>Draw an evolutionary family tree (<strong>phylogeny</strong>)</td><td>5</td></tr>
+            </table>
+            </div>
+
+            <h3 class="text-lg font-bold border-b pb-2 mb-3">One story runs through all five experiments</h3>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-2 mb-4 text-center text-sm">
+                <div class="bg-blue-50 border border-blue-200 rounded p-3"><div class="font-bold text-blue-800">Exp 1</div>Find your way around NCBI</div>
+                <div class="bg-blue-50 border border-blue-200 rounded p-3"><div class="font-bold text-blue-800">Exp 2</div>Download the 16S gene (FASTA)</div>
+                <div class="bg-blue-50 border border-blue-200 rounded p-3"><div class="font-bold text-blue-800">Exp 3</div>BLAST it: who is it?</div>
+                <div class="bg-blue-50 border border-blue-200 rounded p-3"><div class="font-bold text-blue-800">Exp 4</div>Align it with 3 other bacteria</div>
+                <div class="bg-blue-50 border border-blue-200 rounded p-3"><div class="font-bold text-blue-800">Exp 5</div>Build a tree: does it match Gram staining?</div>
+            </div>
+            <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded mb-4">
+                <h4 class="font-bold text-indigo-900 mb-1">Scenario 1: 16S rRNA identifies bacteria</h4>
+                <p class="text-indigo-900 text-sm">Imagine your lab has sequenced the 16S rRNA gene of a Gram-positive coccus from a wound swab. To practise, we use a trusted reference sequence as a stand-in for that "unknown". You will download it, identify it with BLAST, compare it with three other bacteria, and test whether the 16S gene alone can sort bacteria into Gram-positive and Gram-negative groups.</p>
+            </div>
+            ${SCENARIO1_TABLE}
+            <p class="text-sm text-slate-600 mt-3 mb-8">After Experiment 5, your group will repeat the same workflow on a new problem in <strong>Practice Scenarios</strong> (antibiotic resistance, <em>Candida</em> identification, SARS-CoV-2 variants or Taq polymerase).</p>
+
+            <h3 class="text-lg font-bold border-b pb-2 mb-3">Golden rules</h3>
+            <ul class="list-disc pl-5 space-y-2 mb-8 text-sm md:text-base">
+                <li><strong>DNA or protein?</strong> DNA/RNA sequences contain only A, T, G, C (and sometimes N). Protein sequences contain many other letters (M, L, K, E, W…).
+                    <div class="mt-2 overflow-x-auto"><table class="tbl max-w-md"><tr><th>Sequence type</th><th>BLAST program</th><th>Clustal Omega mode</th></tr><tr><td>DNA / RNA</td><td>blastn</td><td>DNA</td></tr><tr><td>Protein</td><td>blastp</td><td>Protein</td></tr></table></div></li>
+                <li>Always write down the <strong>accession number with its version</strong> (e.g. <code>NR_118997.2</code>), not just the organism's name.</li>
+                <li>Copy the <strong>whole</strong> FASTA sequence, including the first line that starts with <code>&gt;</code>.</li>
+                <li>Save sequences in a <strong>plain-text</strong> file (Notepad). Never use MS Word: it adds hidden formatting that the tools cannot read.</li>
+                <li>Take a <strong>screenshot</strong> of every result before you close the page.</li>
+                <li>If a website is slow or shows a "checking your browser" page, refresh once and wait. Do not click Submit repeatedly.</li>
+                <li>Your answers save automatically, <strong>but only in this browser on this device</strong>. Use the same device and do not clear browsing data until you have submitted.</li>
+            </ul>`,
+        steps: [
+            'Type your <strong>Name, Class and Roll Number</strong> in the boxes at the top of this page.',
+            'Open <strong>Notepad</strong> (Windows), TextEdit in plain-text mode (Mac) or a notes app (phone), and save an empty file called <code>my_sequences.txt</code>. All your sequences will go here.',
+            'Create a folder called <code>Bioinfo_screenshots</code> to keep your screenshots together.',
+            'Read the Golden Rules above, especially the DNA/protein table.',
+            'Look at the Scenario 1 table. You will meet these four bacteria in every experiment.'
+        ],
+        quiz: [
+            { q: 'Which program should you use to save your sequences?', options: ['MS Word', 'Notepad (plain text)', 'PowerPoint'], answer: 1, explain: 'Plain text only. Word adds hidden formatting that bioinformatics tools cannot read.' },
+            { q: 'You have a protein sequence. Which BLAST program do you choose?', options: ['blastn', 'blastp'], answer: 1, explain: 'blastp is for protein; blastn is for nucleotide (DNA/RNA).' }
+        ]
+    },
+    {
+        id: 1, nav: 'Database Exp.', label: 'Experiment 1', title: 'Database Exploration (NCBI)',
+        aim: 'To explore the NCBI website and identify the main databases a microbiologist uses.',
+        principle: `<p class="mb-2">Biological data are stored in online <strong>databases</strong>, much like strains are stored in a culture collection. The National Center for Biotechnology Information (NCBI, USA) hosts many linked databases in one place.</p>
+            <ul class="list-disc pl-5 space-y-1">
+                <li><strong>Primary databases</strong> store data exactly as scientists submitted it. Example: <strong>GenBank</strong> (DNA sequences).</li>
+                <li><strong>Secondary (derived) databases</strong> are built by checking, curating or analysing primary data. Examples: <strong>RefSeq</strong> (curated reference sequences) and <strong>UniProtKB/Swiss-Prot</strong> (reviewed proteins).</li>
+                <li>Every record has a unique <strong>accession number</strong>, like the ATCC number of a strain.</li>
+            </ul>`,
+        terms: [['Database', 'An organised, searchable collection of data.'], ['NCBI', 'National Center for Biotechnology Information: home of GenBank, PubMed, BLAST and more.'], ['Accession number', 'The permanent ID of a record, e.g. NR_118997.2 (the ".2" is the version).'], ['Taxonomy', 'The NCBI database of organism names and their classification (lineage).']],
+        steps: [
+            `Open the NCBI homepage: ${ext(URLS.ncbi)}`,
+            'Click the drop-down menu next to the search box (it usually says <strong>All Databases</strong>). This list shows NCBI\'s databases. Scroll through it.',
+            'Find these databases in the list: <strong>Nucleotide</strong>, <strong>Protein</strong>, <strong>PubMed</strong>, <strong>Taxonomy</strong>, <strong>Structure</strong> and <strong>Gene</strong>. Note in one line what each stores. (BLAST is also on the homepage, but it is a <em>tool</em>, not a database.)',
+            'Mini-task 1: choose <strong>Taxonomy</strong> in the drop-down, type <code>Staphylococcus aureus</code> and click Search. Open the result and find the <strong>Lineage</strong> line.',
+            'Mini-task 2: choose <strong>PubMed</strong>, search <code>Staphylococcus aureus 16S rRNA</code>, and open any one paper.',
+            'Take screenshots of the NCBI homepage and your Taxonomy result for your record.'
+        ],
+        see: 'The Taxonomy page lists the full classification of <em>S. aureus</em>, starting from <em>cellular organisms; Bacteria</em> and ending with the genus <em>Staphylococcus</em>. PubMed shows a list of research papers with titles, authors and journal names.',
+        trouble: ['The NCBI page looks different from the description: the layout changes from time to time. Look for the drop-down next to the main search box.', 'You see a "checking your browser" page: refresh once and wait a few seconds.'],
+        record: [
+            { id: 'm1-input-1', type: 'area', label: 'Name three NCBI databases and what kind of data each one stores.', placeholder: '1. Database: what it stores...\n2. Database: what it stores...\n3. Database: what it stores...' },
+            { id: 'm1-input-2', type: 'area', label: 'Write the lineage (classification) of Staphylococcus aureus from NCBI Taxonomy.', placeholder: 'cellular organisms; Bacteria; ...; Staphylococcus', hint: 'Copy the "Lineage" line from the Taxonomy page. Compare it with the classification you learnt from Bergey\'s Manual.' },
+            { id: 'm1-input-3', type: 'text', label: 'Title of one PubMed paper on S. aureus 16S rRNA:', placeholder: 'Paper title (journal, year)' },
+            { id: 'm1-input-4', type: 'area', label: 'Is GenBank a primary or secondary database? What about RefSeq? Give one reason for each.', placeholder: 'GenBank is ... because ...\nRefSeq is ... because ...', hint: 'Ask: does the database keep data exactly as scientists sent it, or has someone checked and organised it?' }
+        ],
+        quiz: [
+            { q: 'GenBank mainly stores:', options: ['Research papers', 'Nucleotide (DNA) sequences', '3D protein structures'], answer: 1, explain: 'GenBank is the primary nucleotide sequence database. Papers are in PubMed; structures are in Structure/PDB.' },
+            { q: 'A database that keeps sequences exactly as submitted by researchers is called:', options: ['A primary database', 'A secondary database'], answer: 0, explain: 'Primary = original submitted data. Secondary = curated or derived from primary data.' }
+        ],
+        practise: 'Every scenario starts by finding records in NCBI (or UniProt for Scenario 5).'
+    },
+    {
+        id: 2, nav: 'Seq. Retrieval', label: 'Experiment 2', title: 'Sequence Retrieval (FASTA)',
+        aim: 'To retrieve the 16S rRNA gene sequence of <em>Staphylococcus aureus</em> from GenBank and save it in FASTA format.',
+        principle: `<p class="mb-2">A GenBank record is like a detailed label on a culture tube: it says what the sequence is, which organism it came from, who submitted it, and then gives the sequence. Its main parts are:</p>
+            <ul class="list-disc pl-5 space-y-1 mb-3">
+                <li><strong>LOCUS</strong>: name, length (bp) and molecule type</li>
+                <li><strong>DEFINITION</strong>: what the sequence is</li>
+                <li><strong>ACCESSION / VERSION</strong>: its ID</li>
+                <li><strong>ORGANISM</strong>: species and lineage</li>
+                <li><strong>FEATURES</strong>: where genes and other parts lie</li>
+                <li><strong>ORIGIN</strong>: the sequence itself</li>
+            </ul>
+            <p class="mb-2">Most tools need only the sequence, in <strong>FASTA format</strong>: one header line starting with <code>&gt;</code>, then the sequence.</p>
+            <pre class="fasta"><span class="hdr">&gt;NR_118997.2 Staphylococcus aureus ... 16S ribosomal RNA ...</span>
+AGAGTTTGATCCTGGCTCAGGATGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAGC...
+(example only; your sequence will be about 1,500 letters long)</pre>`,
+        terms: [['FASTA', 'Plain-text sequence format: a ">" header line followed by sequence lines.'], ['Header', 'The first line of a FASTA entry. It starts with ">" and names the sequence.'], ['RefSeq', 'NCBI\'s curated reference sequences. Accessions starting with NR_ are RefSeq rRNA records.'], ['bp', 'Base pairs: the unit of DNA length.']],
+        steps: [
+            `On the NCBI homepage (${ext(URLS.ncbi)}), choose <strong>Nucleotide</strong> in the drop-down next to the search box.`,
+            'Type <code>NR_118997</code> and click <strong>Search</strong>. The record opens directly. (If you see a list, click the <em>S. aureus</em> 16S entry.)',
+            'Read the top of the record: note the length on the <strong>LOCUS</strong> line, the <strong>DEFINITION</strong> and the <strong>ORGANISM</strong>. Scroll down to see FEATURES and ORIGIN.',
+            'Click the <strong>FASTA</strong> link at the top-left of the record.',
+            'Select everything from the <code>&gt;</code> to the last letter, copy it, and paste it into <code>my_sequences.txt</code>. (Alternative: <strong>Send to → File → Format: FASTA → Create File</strong> downloads it.)',
+            `Repeat for the other three bacteria: ${nuc('NR_102783')} (<em>B. subtilis</em>), ${nuc('NR_024570.1')} (<em>E. coli</em>) and ${nuc('NR_026078.1')} (<em>P. aeruginosa</em>). Paste each one below the previous one, leaving a blank line between them. You need all four in Exp 4 and 5.`,
+            'Take screenshots of the GenBank record and the FASTA view.'
+        ],
+        see: 'The header begins with <code>&gt;NR_118997.2 Staphylococcus aureus</code>. The sequence is about 1,500 bp and contains only the letters A, T, G and C.',
+        trouble: ['NCBI shows a newer version (e.g. NR_118997.3): use the newest one.', 'The record is thousands of kb long: you opened a whole genome by mistake. Go back and search by the accession number.', 'The sequence appears as one long line in Notepad: that is fine, the tools still read it.'],
+        record: [
+            { id: 'm2-input-1', type: 'text', label: 'Header (the first line starting with >):', placeholder: '>NR_118997.2 Staphylococcus aureus ...' },
+            { id: 'm2-input-2', type: 'text', label: 'Accession number with version:', placeholder: 'e.g. NR_118997.2', half: true },
+            { id: 'm2-input-3', type: 'text', label: 'Total length (bp):', placeholder: 'e.g. 1550 bp', half: true },
+            { id: 'm2-input-4', type: 'area', label: 'Why is a length of about 1,500 bp expected for this sequence?', placeholder: 'Your answer...', hint: 'Look up the size of the 16S rRNA gene in your textbook. Is it about the same in all bacteria?' },
+            { id: 'm2-input-5', type: 'area', label: 'Accession numbers and lengths of the other three sequences you saved:', placeholder: 'B. subtilis: NR_..., ... bp\nE. coli: NR_..., ... bp\nP. aeruginosa: NR_..., ... bp' }
+        ],
+        quiz: [
+            { q: 'A FASTA header always begins with which symbol?', options: ['#', '>', '*'], answer: 1, explain: 'Every FASTA entry starts with ">". Tools use it to tell where each sequence begins.' },
+            { q: 'In the accession NR_118997.2, what does ".2" mean?', options: ['It is the second gene in the genome', 'It is version 2 of the record (it has been updated once)', 'The organism has two copies'], answer: 1, explain: 'The number after the dot is the version. It goes up each time the sequence is corrected.' }
+        ],
+        practise: 'Scenario 2 (mecA gene and PBP2a protein), Scenario 3 (Candida ITS), Scenario 4 (spike protein) and Scenario 5 (UniProt proteins).'
+    },
+    {
+        id: 3, nav: 'BLAST Search', label: 'Experiment 3', title: 'Similarity Searching (BLAST)',
+        aim: 'To identify the "unknown" 16S rRNA sequence and find similar sequences using NCBI BLAST.',
+        principle: `<p class="mb-2"><strong>BLAST</strong> (Basic Local Alignment Search Tool) compares your sequence (the <strong>query</strong>) with millions of sequences in a database and lists the best matches (<strong>hits</strong>). It works like matching an isolate's biochemical results against an identification chart, but against every known sequence at once.</p>
+            <p class="mb-2">Read three numbers for each hit:</p>
+            <ul class="list-disc pl-5 space-y-1 mb-3">
+                <li><strong>Percent identity</strong>: how many bases are identical in the matched region.</li>
+                <li><strong>Query cover</strong>: how much of <em>your</em> sequence took part in the match.</li>
+                <li><strong>E-value</strong>: how many matches this good you would expect by pure chance. <strong>Smaller is better</strong>; 0.0 means practically zero.</li>
+            </ul>
+            <div class="bg-white border border-slate-200 rounded p-3 text-sm"><strong>Rule of thumb for 16S rRNA:</strong> about <strong>98.7% identity or more</strong> over the full length usually means the same species; below about <strong>94.5%</strong> usually means a different genus.</div>`,
+        terms: [['Query', 'The sequence you submit.'], ['Hit (subject)', 'A database sequence that matches your query.'], ['E-value', 'Expected number of chance matches; 2e-45 means 2 × 10⁻⁴⁵. Smaller = more significant.'], ['blastn / blastp', 'BLAST for nucleotides / BLAST for proteins.']],
+        steps: [
+            `Open the BLAST page: ${ext(URLS.blast)}`,
+            'Click <strong>Nucleotide BLAST</strong> (16S rRNA is DNA, so we use blastn).',
+            'Paste <strong>only</strong> the <em>S. aureus</em> FASTA sequence (from Exp 2) into the "Enter Query Sequence" box.',
+            'Under <strong>Choose Search Set → Databases</strong>, select <strong>rRNA/ITS databases</strong>, then choose <strong>16S ribosomal RNA sequences (Bacteria and Archaea)</strong> from the list. This searches only reference 16S sequences, so the results are clean.',
+            'Leave "Optimize for: Highly similar sequences (megablast)" unchanged. Click the blue <strong>BLAST</strong> button. Wait 1–3 minutes and do not refresh.',
+            'In the <strong>Descriptions</strong> tab, read the top 5–10 rows: Scientific Name, Query Cover, E value, Per. Ident and Accession.',
+            'Click the top hit\'s name to open its <strong>Alignment</strong>. Vertical bars ( | ) mark identical bases.',
+            'Take a screenshot of the Descriptions table.'
+        ],
+        see: 'The top hits are all <em>Staphylococcus</em> species, with E-values of 0.0 and identities close to 100%.',
+        trouble: ['No hits or strange hits: check that you pasted DNA (not the GenBank page text) and chose Nucleotide BLAST.', 'High identity but low query cover: only a small part of your sequence matched, so it is not a reliable identification.', 'The page keeps loading: BLAST is busy. Wait; it refreshes itself.', 'Optional: repeat with <strong>Standard databases → Nucleotide collection (nr/nt)</strong>. You will see many genome records of <em>S. aureus</em> instead of one record per species.'],
+        record: [
+            { id: 'm3-input-1', type: 'text', label: 'Top matched organism/sequence (name and accession):', placeholder: 'Description of the top hit...' },
+            { id: 'm3-input-2', type: 'text', label: 'E-value:', placeholder: 'e.g. 0.0', third: true },
+            { id: 'm3-input-3', type: 'text', label: 'Percent identity:', placeholder: 'e.g. 99.8%', third: true },
+            { id: 'm3-input-5', type: 'text', label: 'Query cover:', placeholder: 'e.g. 100%', third: true },
+            { id: 'm3-input-6', type: 'area', label: 'Name two other Staphylococcus species in your hits and their percent identity. Why do they score almost as well as S. aureus?', placeholder: 'Species 1: ...%\nSpecies 2: ...%\nReason: ...', hint: 'The 16S gene changes very slowly over evolution. How many bases would you expect two species of the same genus to differ by, out of about 1,500?' },
+            { id: 'm3-input-4', type: 'area', label: 'Conclusion: using the 98.7% rule, is your "unknown" S. aureus? What does the E-value tell you?', placeholder: 'My sequence is ... because ...\nThe E-value of ... means ...' }
+        ],
+        quiz: [
+            { q: 'Which E-value shows the most significant (least likely by chance) match?', options: ['5', '0.01', '1e-50'], answer: 2, explain: '1e-50 = 10⁻⁵⁰, a tiny number. The smaller the E-value, the less likely the match happened by chance.' },
+            { q: 'A hit has 99% identity but only 20% query cover. What does this mean?', options: ['A perfect identification', 'Only a small part of your sequence matched, so be careful', 'The E-value must be wrong'], answer: 1, explain: 'Identity is calculated only over the matched part. Always check query cover too.' }
+        ],
+        practise: 'Scenario 2 (blastn and "Align two or more sequences"), Scenario 3 (fungal ITS database), Scenario 4 (optional blastp) and Scenario 5 (blastp).'
+    },
+    {
+        id: 4, nav: 'Multiple Align', label: 'Experiment 4', title: 'Multiple Sequence Alignment (MSA)',
+        aim: 'To align the 16S rRNA genes of four bacteria and locate conserved and variable regions.',
+        principle: `<p class="mb-2">BLAST compares <em>one</em> sequence with a database. A <strong>multiple sequence alignment</strong> lines up <em>three or more</em> sequences column by column, so each column holds the same position in every organism.</p>
+            <ul class="list-disc pl-5 space-y-1 mb-3">
+                <li><strong>Conserved</strong> columns (the same base in all) usually do essential jobs. In 16S rRNA, this is where <strong>universal primers</strong> such as 27F and 1492R bind.</li>
+                <li><strong>Variable</strong> columns differ between species. The 16S gene has nine variable regions (V1–V9) that help tell species apart.</li>
+                <li><strong>Gaps (-)</strong> are added where one sequence has extra bases (insertion) or is missing bases (deletion). Together these are called <strong>indels</strong>.</li>
+            </ul>
+            <div class="overflow-x-auto"><table class="tbl max-w-lg"><tr><th>Symbol under a column</th><th>Meaning</th></tr>
+                <tr><td><code>*</code></td><td>Identical in all sequences</td></tr>
+                <tr><td><code>:</code></td><td>Strongly similar amino acids (protein alignments only)</td></tr>
+                <tr><td><code>.</code></td><td>Weakly similar amino acids (protein alignments only)</td></tr>
+                <tr><td>(blank)</td><td>Not conserved</td></tr></table></div>`,
+        terms: [['Alignment', 'Sequences arranged so that matching positions sit in the same column.'], ['Conserved region', 'A stretch that is the same (or nearly) in all sequences.'], ['Variable region', 'A stretch that differs between species.'], ['Indel', 'An insertion or deletion; shown as gaps (-).']],
+        steps: [
+            'Open <code>my_sequences.txt</code>. Check that it contains all four FASTA sequences, each starting with <code>&gt;</code>.',
+            'Shorten each header to a simple name with no spaces: <code>&gt;S_aureus</code>, <code>&gt;B_subtilis</code>, <code>&gt;E_coli</code>, <code>&gt;P_aeruginosa</code>. Short names make the alignment and the tree easy to read. (Keep the original headers in your Exp 2 record.)',
+            `Open Clustal Omega at EMBL-EBI: ${ext(URLS.clustal)}`,
+            'Set the sequence type to <strong>DNA</strong>. (Use <strong>Protein</strong> only for protein sequences.)',
+            'Paste all four sequences into the input box and click <strong>Submit</strong>. Wait 1–2 minutes.',
+            'In the <strong>Alignments</strong> tab, scroll through the blocks. Look at the line under each block: find long runs of <code>*</code> and stretches where <code>*</code> is missing. Look for dashes (-).',
+            'Optional: in the results, open the <strong>Percent Identity Matrix</strong> and note the % identity between pairs.',
+            'Take a screenshot of one block that shows both a conserved and a variable stretch.'
+        ],
+        see: 'Long runs of asterisks, broken by blocks where the four sequences differ. Those blocks are the 16S variable regions. A few dashes appear where one sequence has extra or missing bases.',
+        trouble: ['Error about invalid sequences: check that every sequence starts with a > line and that there is no extra text (such as "ORIGIN" or numbers).', 'Only one row appears: the > lines are missing, so all sequences were joined into one.', 'Names appear as long accession numbers: shorten the headers (step 2) and resubmit.'],
+        record: [
+            { id: 'm4-input-1', type: 'area', label: 'What does an asterisk (*) at the bottom of a column indicate?', placeholder: 'Your interpretation...' },
+            { id: 'm4-input-3', type: 'area', label: 'Where are the asterisks concentrated, and where do the four sequences differ? Why are the conserved stretches useful to microbiologists?', placeholder: 'Conserved stretches are found ... They are useful because ...\nVariable stretches are found ... They are useful because ...', hint: 'Think about universal 16S primers such as 27F and 1492R. Where must they bind to work on every bacterium? What would you use to tell two species apart?' },
+            { id: 'm4-input-2', type: 'area', label: 'Did you find any gaps (dashes)? What do they represent in an evolutionary context?', placeholder: 'Discuss insertions and deletions...' },
+            { id: 'm4-input-4', type: 'text', label: 'Optional: % identity from the matrix: S. aureus vs B. subtilis, and S. aureus vs E. coli.', placeholder: 'S_aureus–B_subtilis: ...%   S_aureus–E_coli: ...%' }
+        ],
+        quiz: [
+            { q: 'An asterisk (*) under a column means:', options: ['The column has a gap', 'All sequences have the same base/amino acid there', 'The base is mutated'], answer: 1, explain: '* = fully conserved column.' },
+            { q: 'A dash (-) inside a sequence row means:', options: ['A sequencing error', 'A gap: this sequence lacks bases that others have (or others have an insertion)', 'An unknown base'], answer: 1, explain: 'Gaps represent indels. Unknown bases are written as N (DNA) or X (protein).' }
+        ],
+        practise: 'Scenario 2 (protein alignment), Scenario 3 (DNA alignment with many gaps), Scenario 4 (real deletions and an insertion) and Scenario 5 (protein domains).'
+    },
+    {
+        id: 5, nav: 'Phylogenetics', label: 'Experiment 5', title: 'Phylogenetic Tree Construction',
+        aim: 'To construct a phylogenetic tree of the four bacteria and test whether the 16S rRNA gene groups them by Gram reaction.',
+        principle: `<p class="mb-2">A <strong>phylogenetic tree</strong> is a family tree of organisms built from differences between their sequences.</p>
+            <ul class="list-disc pl-5 space-y-1 mb-3">
+                <li><strong>Tips (leaves)</strong> are the organisms. <strong>Nodes</strong> (branch points) are their common ancestors.</li>
+                <li>Two tips joined at the same node near the tips are each other's closest relatives (<strong>sister groups</strong>).</li>
+                <li>Phylogeny.fr "One Click" aligns the sequences (MUSCLE), removes unreliable columns (Gblocks), builds the tree (PhyML) and draws it (TreeDyn).</li>
+                <li>It draws a <strong>phylogram</strong>: <strong>branch length shows how much the sequence has changed</strong>. A longer branch means more change. (A cladogram shows only the branching order.)</li>
+                <li>Numbers at the nodes are <strong>branch support</strong> values. Closer to 1 (or 100) means more confidence in that grouping.</li>
+            </ul>`,
+        terms: [['Node', 'A branch point; represents a common ancestor.'], ['Clade', 'An ancestor and all its descendants.'], ['Phylogram', 'A tree in which branch lengths show the amount of change.'], ['Branch support', 'A number showing how reliable a grouping is.']],
+        steps: [
+            'Before you start, write down your <strong>prediction</strong> in the first box below: which two bacteria will pair together?',
+            `Open Phylogeny.fr: ${ext(URLS.phylofr)} (If it is down, use ${ext(URLS.ngphylo, 'NGPhylogeny.fr')} and choose a "One Click" workflow.)`,
+            'From the <strong>Phylogeny Analysis</strong> menu, choose <strong>One Click</strong>.',
+            'Paste the same four sequences with the short names you used in Exp 4.',
+            'Give your analysis a title (e.g. <code>16S_Gram_test</code>) and click <strong>Submit</strong>.',
+            'Wait 2–10 minutes. The page updates itself as each step finishes; do not close it.',
+            'Study the final tree. Download it as an image (PNG) from the tree rendering step.',
+            'Take a screenshot of the tree.'
+        ],
+        see: 'A tree with four tips, two pairs and support values at the nodes. The tree is drawn from left (root) to right (tips).',
+        trouble: ['A Gram-positive pairs with a Gram-negative: check that you pasted all four sequences and that they are DNA.', 'Phylogeny.fr does not load: use NGPhylogeny.fr instead.', 'The tree is drawn as if rooted on the left: the program places the root for display only. Do not read the left-most split as the oldest ancestor unless you added an outgroup.'],
+        record: [
+            { id: 'm5-input-5', type: 'text', label: 'Prediction (before running): which two bacteria do you expect to pair together, and why?', placeholder: 'I predict ... and ... because ...' },
+            { id: 'm5-input-1', type: 'text', label: 'Result: which two pairs are formed (closest branches)?', placeholder: 'Pair 1: ... and ...   Pair 2: ... and ...' },
+            { id: 'm5-input-3', type: 'area', label: 'Do the pairs match the Gram reaction of these bacteria? What does this tell you about the 16S rRNA gene?', placeholder: 'Your answer...', hint: 'Look at the Gram column in the Scenario 1 table. The tree was built only from DNA, with no staining information. What does it mean if it still recovers the Gram groups?' },
+            { id: 'm5-input-2', type: 'area', label: 'What does a shorter branch length between two organisms suggest about their genetic divergence?', placeholder: 'Discuss genetic similarity and evolutionary time...' },
+            { id: 'm5-input-4', type: 'area', label: 'Extension: 16S rRNA cannot reliably separate E. coli from Shigella. Why not?', placeholder: 'Your answer...', hint: 'BLAST your E. coli 16S sequence. How many Shigella hits score close to 100%? What would you need instead?' }
+        ],
+        quiz: [
+            { q: 'Two tips joined at the same node close to the tips are:', options: ['The most distantly related', 'Each other\'s closest relatives (sister groups)', 'The same species'], answer: 1, explain: 'They share the most recent common ancestor in the tree.' },
+            { q: 'In a phylogram, a longer branch means:', options: ['More sequence change along that branch', 'An older organism', 'A larger genome'], answer: 0, explain: 'Branch length is proportional to the amount of change (substitutions per site).' }
+        ],
+        practise: 'Scenario 3 (Candida ITS tree).'
+    }
+    ];
+
+    /* ---------- Practice scenarios (Scenarios 2–5) ---------- */
+    const SCENARIOS = [
+    {
+        id: 2, short: 'mecA', title: 'mecA and horizontal gene transfer',
+        theme: 'Antibiotic resistance', molecule: 'Gene, then protein', blast: 'blastn', mode: 'DNA, then Protein', exps: '2, 3, 4',
+        story: 'A hospital laboratory finds methicillin-resistant <em>Staphylococcus aureus</em> (MRSA) and methicillin-resistant <em>S. epidermidis</em> on the same ward. Both carry the <em>mecA</em> gene, which encodes PBP2a, a penicillin-binding protein that β-lactam antibiotics cannot block. Did the two species get <em>mecA</em> separately, or has the gene moved between them?',
+        goal: 'The evidence for gene transfer is a <strong>contrast</strong>: two species whose 16S genes clearly differ carry an almost identical <em>mecA</em>. Finding <em>mecA</em> in <em>S. epidermidis</em> alone does not prove transfer; the comparison does.',
+        seqTable: () => `
+            <table class="tbl">
+                <tr><th>Sequence</th><th>Accession</th><th>Note</th></tr>
+                <tr><td><em>mecA</em> (<em>S. aureus</em>)</td><td>${nuc('X52593.1')}</td><td>mecA coding sequence for PBP2a</td></tr>
+                <tr><td>16S rRNA, <em>S. aureus</em> ATCC 12600</td><td>${nuc('NR_118997.2')}</td><td>Same as Scenario 1</td></tr>
+                <tr><td>16S rRNA, <em>S. epidermidis</em> ATCC 14990 (type strain)</td><td>${nuc('D83363')}</td><td>Partial sequence (shorter)</td></tr>
+                <tr><td>mecC protein (<em>S. aureus</em>)</td><td>${teacherAcc('mecC_protein', 'protein')}</td><td>A <em>mecA</em> relative found in livestock-associated MRSA</td></tr>
+            </table>`,
+        steps: [
+            { exp: 'Exp 2', html: `Open ${nuc('X52593.1')} in Nucleotide, click <strong>FASTA</strong> and save it in a new file <code>mecA.txt</code>.` },
+            { exp: 'Exp 3', html: 'Run <strong>blastn</strong> with the <em>mecA</em> sequence against <strong>Standard databases → Nucleotide collection (nr/nt)</strong>. In the Descriptions, scroll past the <em>S. aureus</em> hits and look for other <em>Staphylococcus</em> species. (The <strong>Taxonomy</strong> tab on the results page lists them by species.)' },
+            { exp: 'Exp 3', html: 'The transfer test: on the Nucleotide BLAST page, tick <strong>Align two or more sequences</strong>. Paste the <em>S. aureus</em> 16S (NR_118997.2) in the top box and the <em>S. epidermidis</em> 16S (D83363) in the bottom box. Click BLAST and record the identity <strong>and</strong> query cover.' },
+            { exp: 'Exp 2', html: 'Get the PBP2a protein: in the X52593.1 GenBank record, scroll to <strong>FEATURES → CDS</strong>, click the <strong>protein_id</strong> link, then click <strong>FASTA</strong>. Rename the header <code>&gt;PBP2a_mecA</code>.' },
+            { exp: 'Exp 2', html: 'Get the mecC protein (accession in the table above) in FASTA and rename the header <code>&gt;mecC</code>. Put both proteins in one file.' },
+            { exp: 'Exp 4', html: `Align the two proteins in ${ext(URLS.clustal, 'Clustal Omega')} using <strong>Protein</strong> mode. Look at where the asterisks cluster. The active-site serine of PBP2a is <strong>Ser403</strong>.` }
+        ],
+        checkpoint: 'Your <em>mecA</em> BLAST should show many hits with E-value 0.0. Because D83363 is a partial sequence, its query cover in the two-sequence comparison will be less than 100%.',
+        fields: [
+            { id: 'sc2-f1', type: 'text', label: '16S identity, S. aureus vs S. epidermidis (and query cover):', placeholder: '...% identity over ...% query cover' },
+            { id: 'sc2-f2', type: 'text', label: 'mecA identity in a species other than S. aureus (name and %):', placeholder: 'Species: ...%' },
+            { id: 'sc2-acc', type: 'text', label: 'mecC protein accession you used:', placeholder: 'e.g. accession from teacher', onlyIfBlank: 'mecC_protein' }
+        ],
+        questions: [
+            { q: 'Which species carry mecA in your BLAST hits, and at what identity?', hint: 'Use the Scientific Name column, scroll beyond the first rows, or open the Taxonomy tab of the results.' },
+            { q: 'Which is more similar between S. aureus and S. epidermidis: their 16S genes or their mecA genes? Why is that surprising?', hint: 'Genes passed from mother cell to daughter cell change at roughly the same pace as the rest of the genome. If one gene is far more similar than 16S, how might it have arrived?' },
+            { q: 'What mobile genetic element carries mecA between staphylococci?', hint: 'It is a "staphylococcal cassette chromosome". Search PubMed or your textbook for SCCmec.' },
+            { q: 'In the protein alignment, are the asterisks spread evenly or clustered? Explain.', hint: 'Look around Ser403. An enzyme can tolerate changes on its surface, but not in its active site.' },
+            { q: 'Clinical link: standard mecA PCR tests can miss mecC strains. Why?', hint: 'PCR primers must match their target closely. How different is mecC from mecA at the DNA level (about 70% identity)?' }
+        ]
+    },
+    {
+        id: 3, short: 'Candida ITS', title: 'Candida ITS: is "Candida" one natural group?',
+        theme: 'Fungal identification', molecule: 'rDNA spacer (ITS)', blast: 'blastn', mode: 'DNA', exps: '2, 3, 4, 5',
+        story: 'An ICU laboratory isolates a yeast that the routine biochemical kit cannot identify reliably. Sequencing shows it is <em>Candida auris</em>, an emerging, often drug-resistant pathogen. Is <em>C. auris</em> just a new strain of <em>C. albicans</em>, or something quite different?',
+        goal: '<em>C. auris</em> is not a newer, more dangerous strain of <em>C. albicans</em>. It is a separate species from a distant lineage, and your tree will make that visible.',
+        seqTable: () => `
+            <table class="tbl">
+                <tr><th>Species</th><th>ITS accession</th><th>Short name</th></tr>
+                <tr><td><em>Candida auris</em> JCM 15448 (type strain)</td><td>${nuc('AB375772')}</td><td><code>&gt;C_auris</code></td></tr>
+                <tr><td><em>Candida albicans</em></td><td>${teacherAcc('itsAlbicans')}</td><td><code>&gt;C_albicans</code></td></tr>
+                <tr><td><em>Candida tropicalis</em></td><td>${teacherAcc('itsTropicalis')}</td><td><code>&gt;C_tropicalis</code></td></tr>
+                <tr><td><em>Candida parapsilosis</em></td><td>${teacherAcc('itsParapsilosis')}</td><td><code>&gt;C_parapsilosis</code></td></tr>
+                <tr><td><em>Nakaseomyces glabratus</em> (<em>C. glabrata</em>)</td><td>${teacherAcc('itsGlabratus')}</td><td><code>&gt;N_glabratus</code></td></tr>
+            </table>
+            <p class="text-xs text-slate-500 mt-2">Accessions come from NCBI's curated fungal ITS reference set (BioProject PRJNA177353). To see the choices yourself, search Nucleotide for <code>Candida albicans[Organism] AND PRJNA177353[BioProject]</code>.</p>`,
+        facts: `<ul class="list-disc pl-5 space-y-1">
+                <li><em>C. auris</em> was described in 2009 from an ear-canal isolate in Japan. It belongs to the family Metschnikowiaceae.</li>
+                <li>In 2024 it was proposed for a new genus, <em>Candidozyma</em>. The change is still debated, and both names are in use.</li>
+                <li><em>C. albicans</em>, <em>C. tropicalis</em> and <em>C. parapsilosis</em> sit in the core <em>Candida</em> lineage.</li>
+                <li><em>C. glabrata</em> (now <em>Nakaseomyces glabratus</em>) is closer to baker's yeast than to <em>C. albicans</em>.</li>
+            </ul>`,
+        steps: [
+            { exp: 'Exp 2', html: 'Download all five ITS sequences in FASTA (accessions in the table) into <code>candida_ITS.txt</code>. Rename the headers to the short names shown.' },
+            { exp: 'Exp 3', html: 'Run <strong>blastn</strong> with the <em>C. albicans</em> ITS. Under Databases choose <strong>rRNA/ITS databases → Internal transcribed spacer region (ITS) from Fungi type and reference material</strong>.' },
+            { exp: 'Exp 4', html: `Align all five in ${ext(URLS.clustal, 'Clustal Omega')}, <strong>DNA</strong> mode. Expect many more gaps than in Scenario 1.` },
+            { exp: 'Exp 5', html: `Build a tree with the same five sequences in ${ext(URLS.phylofr, 'Phylogeny.fr')} One Click (or ${ext(URLS.ngphylo, 'NGPhylogeny.fr')}).` }
+        ],
+        checkpoint: 'ITS length varies a lot between distant yeasts, so the alignment will have many gaps. On the tree, trust the core cluster versus the outsiders, not the exact order of the deepest branches.',
+        fields: [
+            { id: 'sc3-acc', type: 'area', label: 'Accessions you used for C. albicans, C. tropicalis, C. parapsilosis and N. glabratus:', placeholder: 'C. albicans: NR_...\nC. tropicalis: NR_...\nC. parapsilosis: NR_...\nN. glabratus: NR_...', onlyIfBlank: 'itsAlbicans' },
+            { id: 'sc3-f1', type: 'text', label: 'BLAST of C. albicans ITS: top hit, identity and E-value:', placeholder: 'Top hit: ... | ...% | E = ...' }
+        ],
+        questions: [
+            { q: 'Why do mycologists use the ITS region instead of 16S rRNA to identify fungi?', hint: 'Fungi are eukaryotes. Which small-subunit rRNA do they have? Which region did fungal biologists choose as the official DNA barcode?' },
+            { q: 'Where are the gaps concentrated, and why are there more than in Scenario 1?', hint: 'ITS1 and ITS2 are spacers that are cut out of the rRNA precursor and thrown away. Compare them with the 5.8S gene that sits between them.' },
+            { q: 'Which species group with C. albicans, and which sit far away?', hint: 'Read the tree from the tips inward. Which tips join first? Which have long separate branches?' },
+            { q: 'All five were once called "Candida". What does your tree suggest about that name?', hint: 'Should a genus group organisms that look alike under the microscope, or organisms that share a recent common ancestor?' },
+            { q: 'Does the long branch of C. auris explain its drug resistance?', hint: 'First ask what ITS does in the cell: does it code for any protein? Then ask which kinds of genes cause antifungal resistance.' }
+        ]
+    },
+    {
+        id: 4, short: 'SARS-CoV-2 spike', title: 'SARS-CoV-2 spike: substitutions and indels',
+        theme: 'Viral evolution', molecule: 'Protein', blast: 'blastp (optional)', mode: 'Protein', exps: '2, 3, 4',
+        story: 'Genomic surveillance laboratories track SARS-CoV-2 variants by comparing their spike proteins with the original Wuhan-Hu-1 virus. The spike protein binds the human ACE2 receptor, so changes in it can affect how the virus spreads and how well antibodies recognise it.',
+        goal: 'Spike variants carry both kinds of mutation: <strong>substitutions</strong> (one amino acid replaced by another) and real <strong>indels</strong> (deletions and one insertion), so the gaps in your alignment have biological meaning.',
+        seqTable: () => `
+            <table class="tbl">
+                <tr><th>Virus</th><th>Pango lineage</th><th>Spike protein accession</th><th>Short name</th></tr>
+                <tr><td>Wuhan-Hu-1 (reference)</td><td>–</td><td>${prot('YP_009724390.1')} (genome ${nuc('NC_045512.2')})</td><td><code>&gt;Wuhan</code></td></tr>
+                <tr><td>Alpha</td><td>B.1.1.7</td><td>${teacherAcc('spikeAlpha', 'protein')}</td><td><code>&gt;Alpha</code></td></tr>
+                <tr><td>Delta</td><td>B.1.617.2</td><td>${teacherAcc('spikeDelta', 'protein')}</td><td><code>&gt;Delta</code></td></tr>
+                <tr><td>Omicron</td><td>BA.1</td><td>${teacherAcc('spikeOmicron', 'protein')}</td><td><code>&gt;Omicron</code></td></tr>
+            </table>
+            <p class="text-xs text-slate-500 mt-2">Variant records are chosen in ${ext(URLS.ncbiVirus, 'NCBI Virus')} by filtering SARS-CoV-2 by Pango lineage and keeping complete records only. Avoid any spike sequence full of X characters.</p>`,
+        steps: [
+            { exp: 'Exp 2', html: `Open ${prot('YP_009724390.1')} in NCBI Protein, click <strong>FASTA</strong>, save it in <code>spike.txt</code> and rename the header <code>&gt;Wuhan</code>.` },
+            { exp: 'Exp 2', html: 'Download the Alpha, Delta and Omicron spike proteins (accessions in the table) and rename them <code>&gt;Alpha</code>, <code>&gt;Delta</code>, <code>&gt;Omicron</code>.' },
+            { exp: 'Exp 4', html: `Align all four in ${ext(URLS.clustal, 'Clustal Omega')}, <strong>Protein</strong> mode.` },
+            { exp: 'Exp 4', html: 'Find positions in the alignment. The number at the end of each row is the residue count <em>for that sequence</em>, so use the Wuhan row as your ruler. Shortcuts: use <strong>Ctrl+F</strong> to find <code>AIHVSG</code> in the Wuhan row (H = residue 69, V = 70) and <code>QPTNGVGY</code> (N = residue 501). Look straight down each column.' },
+            { exp: 'Exp 3', html: 'Optional: in <strong>blastp</strong>, tick <strong>Align two or more sequences</strong> and compare Wuhan with Omicron. Record the identity and the number of gaps.' }
+        ],
+        checkpoint: 'Published tables number some deletions slightly differently (a gap inside a repeated stretch can sit in more than one equivalent position). If your numbers are off by one or two, that is expected.',
+        fields: [
+            { id: 'sc4-acc', type: 'area', label: 'Spike accessions you used (Alpha, Delta, Omicron):', placeholder: 'Alpha: ...\nDelta: ...\nOmicron: ...', onlyIfBlank: 'spikeAlpha' },
+            { id: 'sc4-f1', type: 'area', label: 'Observation table: for each variant, list the deletions, insertions and at least three substitutions you found (compared with Wuhan).', placeholder: 'Alpha – deletions: ... | insertion: ... | substitutions: e.g. N501Y, ...\nDelta – ...\nOmicron – ...', hint: 'Write a substitution as Original–Position–New, e.g. D614G means aspartic acid (D) at 614 became glycine (G).' }
+        ],
+        questions: [
+            { q: 'How long is the reference spike protein?', hint: 'It is on the protein record (LOCUS line, in aa) and at the end of the Wuhan row in the alignment.' },
+            { q: 'Which variants have a gap at positions 69–70?', hint: 'Find AIHVSG in the Wuhan row with Ctrl+F, then look straight down that column.' },
+            { q: 'Omicron has an insertion. How does it appear in the other three rows?', hint: 'Clustal keeps every row the same length. What must it put into rows that lack the extra residues?' },
+            { q: 'In the receptor-binding domain (about residues 319–541), which variant has the most columns without an asterisk?', hint: 'Find N501 (QPTNGVGY), which lies inside the RBD, and scan the rows around it. Which variant differs from Wuhan most often?' },
+            { q: 'Why would influenza haemagglutinin (HA) from different years show few gaps in a similar alignment?', hint: 'Revise "antigenic drift" in your virology notes. Which kind of mutation mainly drives it?' }
+        ]
+    },
+    {
+        id: 5, short: 'Taq polymerase', title: 'Taq polymerase lost its proofreading',
+        theme: 'Industrial enzymes', molecule: 'Protein', blast: 'blastp', mode: 'Protein', exps: '2, 3, 4',
+        story: 'Every PCR in your lab uses Taq DNA polymerase from the hot-spring bacterium <em>Thermus aquaticus</em>. But cloning labs often pay more for "high-fidelity" enzymes such as Pfu. Why does Taq make more copying errors than <em>E. coli</em> DNA polymerase I?',
+        goal: 'Taq and <em>E. coli</em> Pol I share the polymerase core, but Taq\'s proofreading (3′→5′ exonuclease) region is degenerate and inactive. This must be done with <strong>protein</strong> sequences: at the DNA level the two genes are too different to align well.',
+        seqTable: () => `
+            <table class="tbl">
+                <tr><th>Protein</th><th>Accession</th><th>Length</th><th>Download</th></tr>
+                <tr><td>Taq DNA polymerase I (<em>Thermus aquaticus</em>)</td><td>${uni('P19821')}</td><td>832 aa</td><td>${uniFasta('P19821')}</td></tr>
+                <tr><td>DNA polymerase I (<em>E. coli</em> K-12)</td><td>${uni('P00582')}</td><td>928 aa</td><td>${uniFasta('P00582')}</td></tr>
+                <tr><td>DNA polymerase I (<em>Thermus thermophilus</em>)</td><td>You choose from your BLAST hits</td><td>–</td><td>–</td></tr>
+            </table>`,
+        facts: `<p class="mb-2 font-semibold">Domain map (approximate positions)</p>
+            <div class="space-y-2 text-xs">
+                <div><div class="mb-1"><em>E. coli</em> Pol I (928 aa)</div>
+                    <div class="flex rounded overflow-hidden text-center text-white font-medium">
+                        <div class="bg-sky-600 py-1" style="width:35%">5′→3′ exonuclease</div>
+                        <div class="bg-amber-500 py-1" style="width:21%">3′→5′ exo (proofreading)</div>
+                        <div class="bg-emerald-600 py-1" style="width:44%">Polymerase</div></div></div>
+                <div><div class="mb-1">Taq Pol I (832 aa)</div>
+                    <div class="flex rounded overflow-hidden text-center text-white font-medium" style="width:90%">
+                        <div class="bg-sky-600 py-1" style="width:35%">5′→3′ exonuclease</div>
+                        <div class="bg-slate-400 py-1" style="width:15%">inactive</div>
+                        <div class="bg-emerald-600 py-1" style="width:50%">Polymerase</div></div></div>
+            </div>`,
+        steps: [
+            { exp: 'Exp 2', html: 'Download both proteins in FASTA using the links in the table (or from each UniProt page: <strong>Download → FASTA</strong>). Save them in <code>pol.txt</code> and rename the headers <code>&gt;Taq</code> and <code>&gt;Ecoli_PolI</code>.' },
+            { exp: 'Exp 3', html: 'Run <strong>blastp</strong> with Taq against <strong>Non-redundant protein sequences (nr)</strong>. Pick one <em>Thermus thermophilus</em> DNA polymerase I from the hits, open it, get its FASTA and add it as <code>&gt;Tth</code>.' },
+            { exp: 'Exp 4', html: `Align the three proteins in ${ext(URLS.clustal, 'Clustal Omega')}, <strong>Protein</strong> mode.` },
+            { exp: 'Exp 4', html: 'Divide the alignment roughly into front (N-terminal), middle and end (C-terminal) using the domain map. Compare the asterisks and gaps in each part.' }
+        ],
+        checkpoint: 'The closest blastp hits to Taq should be other <em>Thermus</em> species.',
+        fields: [
+            { id: 'sc5-acc', type: 'text', label: 'Thermus thermophilus Pol I accession you chose and its identity to Taq:', placeholder: 'Accession: ... | ...% identity' }
+        ],
+        questions: [
+            { q: 'Which protein is longer, and by how much? Where do most of Taq\'s gaps fall?', hint: 'Use the lengths in the table. Then look for long runs of dashes in the Taq row: front, middle or end?' },
+            { q: 'Which part of the proteins has the most asterisks? Why?', hint: 'Roughly count asterisks in each third. Which domain does the actual copying of DNA?' },
+            { q: 'E. coli Pol I can proofread; Taq cannot. What do you see in the middle region of the alignment?', hint: 'Compare the middle third with the domain map. Is it well conserved?' },
+            { q: 'Why does missing proofreading matter in the laboratory?', hint: 'What happens to a cloned gene if the polymerase copies it with mistakes? Look up the fidelity of Pfu polymerase.' },
+            { q: 'Can this alignment explain why Taq survives 95 °C?', hint: 'An alignment shows which residues match. Does it show how the protein folds, or how stable it is?' }
+        ]
+    }
+    ];
+
+    /* ---------- Glossary ---------- */
+    const GLOSSARY = [
+        ['16S rRNA gene', 'The gene for the RNA of the small ribosomal subunit in bacteria and archaea (~1,500 bp). Used to identify bacteria.'],
+        ['Accession number', 'Permanent ID of a database record, e.g. NR_118997.2. The number after the dot is the version.'],
+        ['Alignment', 'Sequences arranged so that matching positions line up in columns.'],
+        ['BLAST', 'Basic Local Alignment Search Tool: finds database sequences similar to your query.'],
+        ['blastn / blastp', 'BLAST for nucleotide sequences / BLAST for protein sequences.'],
+        ['Branch support', 'A number at a node showing how reliable that grouping is (closer to 1 or 100 = more reliable).'],
+        ['Clade', 'An ancestor and all of its descendants on a tree.'],
+        ['Cladogram', 'A tree that shows only the branching order; branch lengths have no meaning.'],
+        ['Clustal Omega', 'A widely used program for multiple sequence alignment, run online by EMBL-EBI.'],
+        ['Conserved region', 'A stretch that is identical or nearly identical in all aligned sequences.'],
+        ['E-value', 'The number of matches this good expected by chance. Smaller = more significant.'],
+        ['FASTA', 'Plain-text format: a header line starting with ">" followed by the sequence.'],
+        ['GenBank', 'NCBI\'s primary nucleotide sequence database.'],
+        ['Homology', 'Similarity due to shared ancestry. Sequences are either homologous or not; "percent homology" is a misuse.'],
+        ['Indel', 'An insertion or deletion; appears as a gap (-) in an alignment.'],
+        ['ITS', 'Internal transcribed spacer: the region between rRNA genes; the official DNA barcode for fungi.'],
+        ['MSA', 'Multiple sequence alignment: alignment of three or more sequences.'],
+        ['Node', 'A branch point on a tree, representing a common ancestor.'],
+        ['Outgroup', 'A distantly related sequence added to a tree to show where the root lies.'],
+        ['Percent identity', 'Percentage of identical positions in the aligned region.'],
+        ['Phylogram', 'A tree in which branch lengths are proportional to the amount of sequence change.'],
+        ['Primary database', 'Stores data as submitted by researchers (e.g. GenBank).'],
+        ['Query', 'The sequence you submit to a search.'],
+        ['Query cover', 'Percentage of your query sequence included in the matched region.'],
+        ['RefSeq', 'NCBI\'s curated, non-redundant reference sequence collection (a secondary database).'],
+        ['Secondary database', 'Built by curating or analysing primary data (e.g. RefSeq, UniProtKB/Swiss-Prot).'],
+        ['Substitution', 'One base or amino acid replaced by another, e.g. N501Y.'],
+        ['Variable region', 'A stretch that differs between species; useful for telling them apart.']
+    ];
+
+    /* =====================================================================
+       RENDERING
+       ===================================================================== */
+    const ALL_MODULES = [...MODULES, { id: 6, nav: 'Practice Scenarios', scenarioModule: true }];
+    let currentModuleIndex = 0;
+    let currentScenario = null;
+    let saveTimeout;
+
+    const escapeAttr = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+    function stepList(steps, keyPrefix) {
+        return `<div class="space-y-4 mb-8">` + steps.map((s, i) => {
+            const html = typeof s === 'string' ? s : `<span class="inline-block text-xs font-semibold bg-slate-200 text-slate-700 rounded px-1.5 py-0.5 mr-1">${s.exp}</span> ${s.html}`;
+            return `<label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" class="step-checkbox" data-key="${keyPrefix}s${i + 1}">
+                <span class="step-text pt-0.5"><span class="font-semibold text-slate-500 mr-1">${i + 1}.</span>${html}</span>
+            </label>`;
+        }).join('') + `</div>`;
+    }
+
+    const inputCls = 'w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white';
+
+    function field(f, n) {
+        const label = `<label for="${f.id}" class="block text-sm font-semibold mb-1">${n ? n + '. ' : ''}${f.label}</label>`;
+        const hint = f.hint ? `<details class="hint mt-1"><summary class="text-xs text-blue-600 hover:underline">💡 Need a hint?</summary><p class="text-xs text-slate-600 bg-blue-50 border border-blue-100 rounded p-2 mt-1">${f.hint}</p></details>` : '';
+        const control = f.type === 'area'
+            ? `<textarea id="${f.id}" class="${inputCls} h-24" placeholder="${escapeAttr(f.placeholder || '')}"></textarea><div class="print-copy" data-for="${f.id}"></div>`
+            : `<input type="text" id="${f.id}" class="${inputCls}" placeholder="${escapeAttr(f.placeholder || '')}">`;
+        return `<div>${label}${control}${hint}</div>`;
+    }
+
+    function recordBlock(fields) {
+        let html = '', i = 0, n = 0;
+        while (i < fields.length) {
+            const f = fields[i];
+            if (f.half || f.third) {
+                const group = [];
+                while (i < fields.length && (fields[i].half || fields[i].third)) group.push(fields[i++]);
+                html += `<div class="grid grid-cols-1 md:grid-cols-${group.length} gap-4">${group.map(g => field(g, ++n)).join('')}</div>`;
+            } else { html += field(f, ++n); i++; }
         }
+        return html;
+    }
 
-        // Show a specific module
-        function showModule(index) {
-            // Hide all modules
-            document.querySelectorAll('.module-section').forEach(el => {
-                el.classList.remove('active');
-            });
-            
-            // Show selected
-            currentModuleIndex = index;
-            document.getElementById(`module-${modules[index].id}`).classList.add('active');
-            
-            // Update UI
-            renderSidebar();
-            updateNavButtons();
-            
-            // Toggle End of Tutorial text
-            const endText = document.getElementById('end-tutorial-text');
-            if (endText) {
-                if (index === modules.length - 1) {
-                    endText.classList.remove('hidden');
-                } else {
-                    endText.classList.add('hidden');
-                }
-            }
-            
-            // Scroll to top
-            document.getElementById('main-content').scrollTop = 0;
+    function quizBlock(quiz, key) {
+        if (!quiz) return '';
+        return `<div class="no-print mt-8">
+            <h3 class="text-lg font-bold border-b pb-2 mb-4">Check Yourself <span class="text-sm font-normal text-slate-500">(not graded)</span></h3>
+            <div class="space-y-5">` + quiz.map((q, qi) => `
+                <div class="quiz" data-answer="${q.answer}">
+                    <p class="font-medium mb-2">${qi + 1}. ${q.q}</p>
+                    <div class="flex flex-col gap-2">${q.options.map((o, oi) => `<button type="button" class="quiz-opt text-left text-sm border border-slate-300 rounded px-3 py-2 hover:bg-slate-50" onclick="answerQuiz(this, ${oi})">${o}</button>`).join('')}</div>
+                    <p class="quiz-feedback text-sm mt-2 hidden"></p>
+                    <p class="quiz-explain hidden">${q.explain}</p>
+                </div>`).join('') + `</div></div>`;
+    }
+
+    function box(color, title, body, extraCls = '') {
+        return `<div class="bg-${color}-50 border-l-4 border-${color}-500 p-4 rounded mb-6 ${extraCls}">
+            <h3 class="font-bold text-${color}-900 mb-1">${title}</h3>
+            <div class="text-${color}-900 text-sm md:text-base">${body}</div></div>`;
+    }
+
+    function renderModule(m) {
+        const parts = [];
+        parts.push(`<span class="text-blue-600 font-semibold text-sm tracking-wider uppercase mb-2 block">${m.label}</span>`);
+        parts.push(`<h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">${m.title}</h2>`);
+        if (m.id >= 2) parts.push(`<p class="no-print text-sm bg-indigo-50 text-indigo-900 border border-indigo-200 rounded px-3 py-2 mb-6">Today's sequences: <strong>Scenario 1, 16S rRNA</strong> (<em>S. aureus</em>, <em>B. subtilis</em>, <em>E. coli</em>, <em>P. aeruginosa</em>). See <em>Start Here</em> for the accession table.</p>`);
+        parts.push(box('blue', 'Aim', m.aim));
+        if (m.intro) parts.push(m.intro);
+        if (m.principle) parts.push(box('emerald', 'Principle (in simple words)', m.principle));
+        if (m.terms) parts.push(`<div class="no-print mb-8"><h3 class="text-lg font-bold border-b pb-2 mb-3">Key Terms</h3><dl class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">${m.terms.map(t => `<div class="bg-slate-50 border border-slate-200 rounded p-3"><dt class="font-semibold">${t[0]}</dt><dd class="text-slate-600">${t[1]}</dd></div>`).join('')}</dl></div>`);
+        parts.push(`<h3 class="text-lg font-bold border-b pb-2 mb-4">${m.id === 0 ? 'Setup Checklist' : 'Procedure'}</h3>`);
+        parts.push(stepList(m.steps, `m${m.id}`));
+        if (m.see) parts.push(box('violet', '👀 What you should see', m.see, 'no-print'));
+        if (m.trouble) parts.push(box('amber', '🛠️ If something goes wrong', `<ul class="list-disc pl-5 space-y-1">${m.trouble.map(t => `<li>${t}</li>`).join('')}</ul>`, 'no-print'));
+        if (m.id !== 0) parts.push(`<p class="mb-8 text-sm text-slate-600 italic">(Note: Take the screenshot/s for your practical record.)</p>`);
+        if (m.record) {
+            parts.push(`<h3 class="text-lg font-bold border-b pb-2 mb-4">Observations &amp; Result</h3>`);
+            parts.push(`<div class="record-box bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-5">${recordBlock(m.record)}</div>`);
         }
+        parts.push(quizBlock(m.quiz, m.id));
+        if (m.practise) parts.push(`<p class="no-print mt-8 text-sm text-slate-600 border-t pt-4"><strong>🔁 Practise this skill again in:</strong> ${m.practise}</p>`);
 
-        // Handle Next/Prev buttons
-        function navigate(direction) {
-            const newIndex = currentModuleIndex + direction;
-            if (newIndex >= 0 && newIndex < modules.length) {
-                showModule(newIndex);
-            }
-        }
+        const cls = ['module-section', 'bg-white', 'rounded-xl', 'shadow-sm', 'border', 'border-slate-200', 'p-6', 'md:p-8'];
+        if (m.noPrint) cls.push('no-print');
+        if (m.id >= 2) cls.push('print-break');
+        return `<section id="module-${m.id}" class="${cls.join(' ')}">${parts.join('')}</section>`;
+    }
 
-        // Update Next/Prev button states
-        function updateNavButtons() {
-            const prevBtn = document.getElementById('prev-btn');
-            const nextBtn = document.getElementById('next-btn');
-            
-            prevBtn.disabled = currentModuleIndex === 0;
-            nextBtn.disabled = currentModuleIndex === modules.length - 1;
-        }
+    function renderScenarioModule() {
+        const rows = SCENARIOS.map(s => `<tr><td>${s.id}. ${s.short}</td><td>${s.theme}</td><td>${s.molecule}</td><td>${s.blast}</td><td>${s.mode}</td><td>${s.exps}</td></tr>`).join('');
+        const picker = SCENARIOS.map(s => `<button type="button" data-scenario="${s.id}" onclick="chooseScenario(${s.id})" class="scenario-btn text-left border-2 border-slate-200 rounded-lg p-3 hover:border-indigo-400 transition-colors">
+                <div class="text-xs font-semibold text-indigo-600 uppercase">Scenario ${s.id}</div>
+                <div class="font-semibold text-slate-800">${s.short}</div>
+                <div class="text-xs text-slate-500">${s.theme}</div></button>`).join('');
+        return `<section id="module-6" class="module-section print-break bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <span class="text-indigo-600 font-semibold text-sm tracking-wider uppercase mb-2 block">Group Mini-Project</span>
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Practice Scenarios</h2>
+            <div class="no-print">
+                ${box('blue', 'Aim', 'To apply the complete workflow (retrieve → BLAST → align → tree) to a real microbiology problem, working as a group.')}
+                <p class="mb-4">You have already worked through <strong>Scenario 1 (16S rRNA)</strong> in Experiments 1–5. Your teacher will now give your group <strong>one</strong> of the scenarios below. Each one practises the same skills on a new question. Use the hints only after you have tried on your own.</p>
+                <div class="overflow-x-auto mb-6"><table class="tbl">
+                    <tr><th>Scenario</th><th>Theme</th><th>Molecule</th><th>BLAST</th><th>Clustal mode</th><th>Experiments practised</th></tr>
+                    <tr class="bg-indigo-50"><td>1. 16S rRNA</td><td>Bacterial identification</td><td>rRNA gene</td><td>blastn</td><td>DNA</td><td>1–5 (done)</td></tr>
+                    ${rows}
+                </table></div>
+                <h3 class="text-lg font-bold mb-3">Choose your group's scenario</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">${picker}</div>
+            </div>
+            <div id="scenario-worksheet"><p class="text-slate-500 italic">No scenario chosen yet. Pick the one your teacher assigned above.</p></div>
+        </section>`;
+    }
 
-        // Toggle mobile sidebar
-        function toggleMobileMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('mobile-overlay');
-            
-            if (sidebar.classList.contains('hidden')) {
-                sidebar.classList.remove('hidden');
-                sidebar.classList.add('absolute', 'inset-y-0', 'left-0');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('hidden');
-                sidebar.classList.remove('absolute', 'inset-y-0', 'left-0');
-                overlay.classList.add('hidden');
-            }
-        }
+    function renderScenarioWorksheet(s) {
+        const fields = s.fields.filter(f => !f.onlyIfBlank || !CONFIG.accessions[f.onlyIfBlank]);
+        const qFields = s.questions.map((q, i) => ({ id: `sc${s.id}-q${i + 1}`, type: 'area', label: q.q, hint: q.hint, placeholder: 'Your answer...' }));
+        return `
+            <h3 class="text-xl font-bold text-indigo-800 mb-4">Scenario ${s.id}: ${s.title}</h3>
+            ${box('indigo', 'The problem', s.story)}
+            ${box('emerald', 'What you will discover', s.goal)}
+            <h3 class="text-lg font-bold border-b pb-2 mb-3">Sequences</h3>
+            <div class="overflow-x-auto mb-6">${s.seqTable()}</div>
+            ${s.facts ? `<div class="bg-slate-50 border border-slate-200 rounded p-4 mb-6 text-sm">${s.facts}</div>` : ''}
+            <h3 class="text-lg font-bold border-b pb-2 mb-4">Procedure</h3>
+            ${stepList(s.steps, `sc${s.id}`)}
+            ${box('violet', '👀 Checkpoint', s.checkpoint, 'no-print')}
+            <p class="mb-8 text-sm text-slate-600 italic">(Note: Take screenshots of your BLAST, Clustal and tree outputs.)</p>
+            <h3 class="text-lg font-bold border-b pb-2 mb-4">Observations</h3>
+            <div class="record-box bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-5 mb-8">${recordBlock(fields)}</div>
+            <h3 class="text-lg font-bold border-b pb-2 mb-4">Guided Questions</h3>
+            <div class="record-box bg-slate-50 p-5 rounded-lg border border-slate-200 space-y-5">${recordBlock(qFields)}</div>`;
+    }
 
-        // Check if a module's checkboxes are all ticked
-        function isModuleComplete(moduleId) {
-            const checkboxes = document.querySelectorAll(`input[data-module="${moduleId}"]`);
-            if (checkboxes.length === 0) return false;
-            let complete = true;
-            checkboxes.forEach(cb => { if(!cb.checked) complete = false; });
-            return complete;
-        }
+    /* =====================================================================
+       APP LOGIC
+       ===================================================================== */
+    function readStore() {
+        try {
+            const d = JSON.parse(localStorage.getItem(CONFIG.storageKey) || '{}');
+            return { checkboxes: d.checkboxes || {}, inputs: d.inputs || {}, scenario: d.scenario || null };
+        } catch (e) { return { checkboxes: {}, inputs: {}, scenario: null }; }
+    }
 
-        // Update overall progress bar
-        function updateProgress() {
-            const allCheckboxes = document.querySelectorAll('.step-checkbox');
-            let checkedCount = 0;
-            
-            allCheckboxes.forEach(cb => {
-                if(cb.checked) checkedCount++;
-            });
+    function applyStore(root) {
+        const data = readStore();
+        root.querySelectorAll('.step-checkbox').forEach(cb => { cb.checked = !!data.checkboxes[cb.dataset.key]; });
+        root.querySelectorAll('input[type="text"], textarea').forEach(el => { if (el.id && data.inputs[el.id]) el.value = data.inputs[el.id]; });
+    }
 
-            const percentage = allCheckboxes.length > 0 ? Math.round((checkedCount / allCheckboxes.length) * 100) : 0;
-            
-            document.getElementById('overall-progress-bar').style.width = `${percentage}%`;
-            document.getElementById('overall-progress-text').innerText = `${percentage}%`;
-            
-            // Update sidebar indicators
-            modules.forEach(mod => {
-                const indicator = document.getElementById(`nav-indicator-${mod.id}`);
-                if (indicator) {
-                    indicator.className = `w-2 h-2 rounded-full ${isModuleComplete(mod.id) ? 'bg-green-400' : 'bg-slate-600'}`;
-                }
-            });
-        }
+    // Merge what is on screen into the saved data (so answers to a scenario
+    // that is not currently shown are never lost)
+    function saveNow() {
+        const data = readStore();
+        document.querySelectorAll('.step-checkbox').forEach(cb => { data.checkboxes[cb.dataset.key] = cb.checked; });
+        document.querySelectorAll('input[type="text"], textarea').forEach(el => { if (el.id) data.inputs[el.id] = el.value; });
+        data.scenario = currentScenario;
+        try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(data)); } catch (e) { console.warn('Could not save', e); }
+        updateProgress();
+        const ind = document.getElementById('save-indicator');
+        ind.style.opacity = '1';
+        setTimeout(() => { ind.style.opacity = '0'; }, 2000);
+    }
 
-        // Save data to localStorage (with debounce)
-        function saveData() {
-            clearTimeout(saveTimeout);
-            
-            saveTimeout = setTimeout(() => {
-                const data = {
-                    checkboxes: {},
-                    inputs: {}
-                };
+    function saveData() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(saveNow, 400);
+    }
 
-                // Save checkboxes
-                document.querySelectorAll('.step-checkbox').forEach(cb => {
-                    const id = `m${cb.getAttribute('data-module')}s${cb.getAttribute('data-step')}`;
-                    data.checkboxes[id] = cb.checked;
-                });
+    function init() {
+        const container = document.getElementById('modules-container');
+        container.innerHTML = MODULES.map(renderModule).join('') + renderScenarioModule();
+        applyStore(document);
+        const stored = readStore();
+        if (stored.scenario) chooseScenario(stored.scenario, true);
 
-                // Save text inputs and textareas
-                document.querySelectorAll('input[type="text"], textarea').forEach(input => {
-                    if(input.id) {
-                        data.inputs[input.id] = input.value;
-                    }
-                });
+        // One delegated listener saves every checkbox and text box
+        document.addEventListener('input', e => { if (e.target.matches('input[type="text"], textarea')) saveData(); });
+        document.addEventListener('change', e => { if (e.target.matches('.step-checkbox')) saveData(); });
 
-                localStorage.setItem('bioinfo_tutorial_data', JSON.stringify(data));
-                updateProgress();
-                
-                // Show "Saved" toast indicator
-                const indicator = document.getElementById('save-indicator');
-                indicator.style.opacity = '1';
-                setTimeout(() => { indicator.style.opacity = '0'; }, 2000);
-                
-            }, 500);
-        }
+        // Start new students on "Start Here"; returning students on Experiment 1
+        currentModuleIndex = Object.values(stored.checkboxes).some(Boolean) ? 1 : 0;
+        showModule(currentModuleIndex);
+        updateProgress();
+    }
 
-        // Load data from localStorage
-        function loadData() {
-            const savedStr = localStorage.getItem('bioinfo_tutorial_data');
-            if (!savedStr) return;
-            
-            try {
-                const data = JSON.parse(savedStr);
-                
-                // Restore checkboxes
-                document.querySelectorAll('.step-checkbox').forEach(cb => {
-                    const id = `m${cb.getAttribute('data-module')}s${cb.getAttribute('data-step')}`;
-                    if (data.checkboxes[id]) {
-                        cb.checked = data.checkboxes[id];
-                    }
-                });
+    function chooseScenario(id, silent) {
+        const s = SCENARIOS.find(x => x.id === Number(id));
+        if (!s) return;
+        if (!silent) saveNow();
+        currentScenario = s.id;
+        const ws = document.getElementById('scenario-worksheet');
+        ws.innerHTML = renderScenarioWorksheet(s);
+        applyStore(ws);
+        document.querySelectorAll('.scenario-btn').forEach(b => {
+            const on = Number(b.dataset.scenario) === s.id;
+            b.classList.toggle('border-indigo-500', on);
+            b.classList.toggle('bg-indigo-50', on);
+            b.classList.toggle('border-slate-200', !on);
+        });
+        if (!silent) saveNow();
+        renderSidebar();
+    }
 
-                // Restore inputs
-                document.querySelectorAll('input[type="text"], textarea').forEach(input => {
-                    if (input.id && data.inputs[input.id]) {
-                        input.value = data.inputs[input.id];
-                    }
-                });
-            } catch(e) {
-                console.error("Error loading saved data", e);
-            }
-        }
+    function renderSidebar() {
+        const navList = document.getElementById('nav-list');
+        navList.innerHTML = '';
+        ALL_MODULES.forEach((mod, index) => {
+            const li = document.createElement('li');
+            const active = index === currentModuleIndex;
+            li.className = `cursor-pointer rounded-lg px-3 py-2.5 text-sm transition-colors flex items-center justify-between ${active ? 'bg-blue-600 text-white font-medium shadow-md' : 'text-slate-300 hover:bg-slate-800'}`;
+            li.onclick = () => { showModule(index); if (window.innerWidth < 768) toggleMobileMenu(); };
+            const textSpan = document.createElement('span');
+            textSpan.innerText = mod.id === 0 ? `★ ${mod.nav}` : mod.id === 6 ? `◆ ${mod.nav}` : `${mod.id}. ${mod.nav}`;
+            const indicator = document.createElement('div');
+            indicator.id = `nav-indicator-${mod.id}`;
+            indicator.className = `w-2 h-2 rounded-full ${isModuleComplete(mod.id) ? 'bg-green-400' : 'bg-slate-600'}`;
+            li.appendChild(textSpan);
+            li.appendChild(indicator);
+            navList.appendChild(li);
+        });
+    }
 
-        // Run setup on load
-        window.addEventListener('DOMContentLoaded', init);
+    function showModule(index) {
+        document.querySelectorAll('.module-section').forEach(el => el.classList.remove('active'));
+        currentModuleIndex = index;
+        document.getElementById(`module-${ALL_MODULES[index].id}`).classList.add('active');
+        renderSidebar();
+        document.getElementById('prev-btn').disabled = index === 0;
+        document.getElementById('next-btn').disabled = index === ALL_MODULES.length - 1;
+        document.getElementById('end-tutorial-text').classList.toggle('hidden', index !== ALL_MODULES.length - 1);
+        document.getElementById('main-content').scrollTop = 0;
+    }
 
-        // --- Report Submission Logic ---
-        
-        function showSubmitModal() {
-            document.getElementById('submit-modal').classList.remove('hidden');
-        }
+    function navigate(direction) {
+        const n = currentModuleIndex + direction;
+        if (n >= 0 && n < ALL_MODULES.length) showModule(n);
+    }
 
-        function closeSubmitModal() {
-            document.getElementById('submit-modal').classList.add('hidden');
-        }
+    function toggleMobileMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobile-overlay');
+        const opening = sidebar.classList.contains('hidden');
+        sidebar.classList.toggle('hidden', !opening);
+        ['flex', 'absolute', 'inset-y-0', 'left-0'].forEach(c => sidebar.classList.toggle(c, opening));
+        overlay.classList.toggle('hidden', !opening);
+    }
 
-        function openGoogleForm() {
-            // Open the Google Form in a new tab
-            window.open('https://docs.google.com/forms/d/e/1FAIpQLSfbZaRpW1Ax32t2fop2Fq5_iP_L8LwrJLWEuRX-otYbVHmQMA/viewform', '_blank');
-            // Close the modal after triggering
-            closeSubmitModal();
-        }
+    function isModuleComplete(id) {
+        const sec = document.getElementById(`module-${id}`);
+        if (!sec) return false;
+        const boxes = sec.querySelectorAll('.step-checkbox');
+        return boxes.length > 0 && [...boxes].every(cb => cb.checked);
+    }
 
+    function updateProgress() {
+        const all = document.querySelectorAll('.step-checkbox');
+        const done = [...all].filter(cb => cb.checked).length;
+        const pct = all.length ? Math.round(done / all.length * 100) : 0;
+        document.getElementById('overall-progress-bar').style.width = `${pct}%`;
+        document.getElementById('overall-progress-text').innerText = `${pct}%`;
+        ALL_MODULES.forEach(mod => {
+            const ind = document.getElementById(`nav-indicator-${mod.id}`);
+            if (ind) ind.className = `w-2 h-2 rounded-full ${isModuleComplete(mod.id) ? 'bg-green-400' : 'bg-slate-600'}`;
+        });
+    }
+
+    function answerQuiz(btn, choice) {
+        const quiz = btn.closest('.quiz');
+        const correct = Number(quiz.dataset.answer);
+        quiz.querySelectorAll('.quiz-opt').forEach((b, i) => {
+            b.classList.remove('correct', 'wrong');
+            if (i === choice) b.classList.add(i === correct ? 'correct' : 'wrong');
+        });
+        const fb = quiz.querySelector('.quiz-feedback');
+        const explain = quiz.querySelector('.quiz-explain').innerHTML;
+        fb.innerHTML = choice === correct ? `✅ <strong>Correct.</strong> ${explain}` : '❌ Not quite. Read the Principle again and try another option.';
+        fb.classList.remove('hidden');
+    }
+
+    /* ---------- Glossary ---------- */
+    function renderGlossary() {
+        const q = document.getElementById('glossary-search').value.trim().toLowerCase();
+        document.getElementById('glossary-list').innerHTML = GLOSSARY
+            .filter(([t, d]) => !q || t.toLowerCase().includes(q) || d.toLowerCase().includes(q))
+            .map(([t, d]) => `<div class="border-b border-slate-100 pb-2"><dt class="font-semibold text-slate-800">${t}</dt><dd class="text-slate-600">${d}</dd></div>`)
+            .join('') || '<p class="text-slate-500">No matching term.</p>';
+    }
+    function showGlossary() { renderGlossary(); document.getElementById('glossary-modal').classList.remove('hidden'); }
+    function closeGlossary() { document.getElementById('glossary-modal').classList.add('hidden'); }
+
+    /* ---------- Printing: copy textarea text into full-height blocks ---------- */
+    window.addEventListener('beforeprint', () => {
+        document.querySelectorAll('.print-copy').forEach(div => {
+            const ta = document.getElementById(div.dataset.for);
+            div.textContent = ta ? ta.value : '';
+        });
+    });
+
+    /* ---------- Submission ---------- */
+    function showSubmitModal() { document.getElementById('submit-modal').classList.remove('hidden'); }
+    function closeSubmitModal() { document.getElementById('submit-modal').classList.add('hidden'); }
+    function openGoogleForm() { window.open(CONFIG.formUrl, '_blank'); closeSubmitModal(); }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeGlossary(); closeSubmitModal(); } });
+    window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
