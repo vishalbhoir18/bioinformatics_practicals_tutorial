@@ -15,7 +15,7 @@ This tool transforms traditional static lab manuals into an engaging, step-by-st
 
 ## 🔬 Modules Covered
 
-The tutorial is based on the NEP TYBSc Microbiology curriculum. Each experiment follows the familiar practical-journal layout: **Aim → Principle → Procedure → Observations & Result**. Each one also has key terms, "what you should see" checkpoints, troubleshooting tips, hints and ungraded self-check questions.
+The tutorial is based on the NEP TYBSc Microbiology curriculum. Each experiment follows the familiar practical-journal layout: **Aim → Principle → Procedure → Observations & Result**. Each one also has "what you should see" checkpoints, troubleshooting tips, hints and ungraded self-check questions. Unfamiliar words are explained in a searchable Glossary of Terms.
 
 0. **Start Here:** What bioinformatics is, how the experiments connect, golden rules (DNA → blastn/DNA mode; protein → blastp/Protein mode) and workspace setup.
 1. **Database Exploration (NCBI):** Primary vs secondary databases, plus Taxonomy and PubMed mini-tasks.

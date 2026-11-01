@@ -327,7 +327,6 @@
                 <li><strong>Secondary (derived) databases</strong> are built by checking, curating or analysing primary data. Examples: <strong>RefSeq</strong> (curated reference sequences) and <strong>UniProtKB/Swiss-Prot</strong> (reviewed proteins).</li>
                 <li>Every record has a unique <strong>accession number</strong>, like the ATCC number of a strain.</li>
             </ul>`,
-        terms: [['Database', 'An organised, searchable collection of data.'], ['NCBI', 'National Center for Biotechnology Information: home of GenBank, PubMed, BLAST and more.'], ['Accession number', 'The permanent ID of a record, e.g. NR_118997.2 (the ".2" is the version).'], ['Taxonomy', 'The NCBI database of organism names and their classification (lineage).']],
         steps: [
             `Open the NCBI homepage: ${ext(URLS.ncbi)}`,
             'Click the drop-down menu next to the search box (it usually says <strong>All Databases</strong>). This list shows NCBI\'s databases. Scroll through it.',
@@ -366,7 +365,6 @@
             <pre class="fasta"><span class="hdr">&gt;NR_118997.2 Staphylococcus aureus ... 16S ribosomal RNA ...</span>
 AGAGTTTGATCCTGGCTCAGGATGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAGC...
 (example only; your sequence will be about 1,500 letters long)</pre>`,
-        terms: [['FASTA', 'Plain-text sequence format: a ">" header line followed by sequence lines.'], ['Header', 'The first line of a FASTA entry. It starts with ">" and names the sequence.'], ['RefSeq', 'NCBI\'s curated reference sequences. Accessions starting with NR_ are RefSeq rRNA records.'], ['bp', 'Base pairs: the unit of DNA length.']],
         steps: [
             `On the NCBI homepage (${ext(URLS.ncbi)}), choose <strong>Nucleotide</strong> in the drop-down next to the search box.`,
             'Type <code>NR_118997</code> and click <strong>Search</strong>. The record opens directly. (If you see a list, click the <em>S. aureus</em> 16S entry.)',
@@ -402,7 +400,6 @@ AGAGTTTGATCCTGGCTCAGGATGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAGC...
                 <li><strong>E-value</strong>: how many matches this good you would expect by pure chance. <strong>Smaller is better</strong>; 0.0 means practically zero.</li>
             </ul>
             <div class="bg-white border border-slate-200 rounded p-3 text-sm"><strong>Rule of thumb for 16S rRNA:</strong> about <strong>98.7% identity or more</strong> over the full length usually means the same species; below about <strong>94.5%</strong> usually means a different genus.</div>`,
-        terms: [['Query', 'The sequence you submit.'], ['Hit (subject)', 'A database sequence that matches your query.'], ['E-value', 'Expected number of chance matches; 2e-45 means 2 × 10⁻⁴⁵. Smaller = more significant.'], ['blastn / blastp', 'BLAST for nucleotides / BLAST for proteins.']],
         steps: [
             `Open the BLAST page: ${ext(URLS.blast)}`,
             'Click <strong>Nucleotide BLAST</strong> (16S rRNA is DNA, so we use blastn).',
@@ -443,7 +440,6 @@ AGAGTTTGATCCTGGCTCAGGATGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAGC...
                 <tr><td><code>:</code></td><td>Strongly similar amino acids (protein alignments only)</td></tr>
                 <tr><td><code>.</code></td><td>Weakly similar amino acids (protein alignments only)</td></tr>
                 <tr><td>(blank)</td><td>Not conserved</td></tr></table></div>`,
-        terms: [['Alignment', 'Sequences arranged so that matching positions sit in the same column.'], ['Conserved region', 'A stretch that is the same (or nearly) in all sequences.'], ['Variable region', 'A stretch that differs between species.'], ['Indel', 'An insertion or deletion; shown as gaps (-).']],
         steps: [
             'Open <code>my_sequences.txt</code>. Check that it contains all four FASTA sequences, each starting with <code>&gt;</code>.',
             'Shorten each header to a simple name with no spaces: <code>&gt;S_aureus</code>, <code>&gt;B_subtilis</code>, <code>&gt;E_coli</code>, <code>&gt;P_aeruginosa</code>. Short names make the alignment and the tree easy to read. (Keep the original headers in your Exp 2 record.)',
@@ -479,7 +475,6 @@ AGAGTTTGATCCTGGCTCAGGATGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAGC...
                 <li>It draws a <strong>phylogram</strong>: <strong>branch length shows how much the sequence has changed</strong>. A longer branch means more change. (A cladogram shows only the branching order.)</li>
                 <li>Numbers at the nodes are <strong>branch support</strong> values. Closer to 1 (or 100) means more confidence in that grouping.</li>
             </ul>`,
-        terms: [['Node', 'A branch point; represents a common ancestor.'], ['Clade', 'An ancestor and all its descendants.'], ['Phylogram', 'A tree in which branch lengths show the amount of change.'], ['Branch support', 'A number showing how reliable a grouping is.']],
         steps: [
             'Before you start, write down your <strong>prediction</strong> in the first box below: which two bacteria will pair together?',
             `Open Phylogeny.fr: ${ext(URLS.phylofr)} (If it is down, use ${ext(URLS.ngphylo, 'NGPhylogeny.fr')} and choose a "One Click" workflow.)`,
@@ -665,6 +660,12 @@ AGAGTTTGATCCTGGCTCAGGATGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAGC...
 
     /* ---------- Glossary ---------- */
     const GLOSSARY = [
+        ['bp', 'Base pairs: the unit of DNA length (1 kb = 1,000 bp).'],
+        ['Database', 'An organised, searchable collection of data, like a culture collection for sequences.'],
+        ['Header', 'The first line of a FASTA entry. It starts with ">" and names the sequence.'],
+        ['Hit (subject)', 'A database sequence that matches your query in a BLAST search.'],
+        ['NCBI', 'National Center for Biotechnology Information (USA): home of GenBank, PubMed, Taxonomy and BLAST.'],
+        ['Taxonomy (NCBI)', 'The NCBI database of organism names and their classification (lineage).'],
         ['16S rRNA gene', 'The gene for the RNA of the small ribosomal subunit in bacteria and archaea (~1,500 bp). Used to identify bacteria.'],
         ['Accession number', 'Permanent ID of a database record, e.g. NR_118997.2. The number after the dot is the version.'],
         ['Alignment', 'Sequences arranged so that matching positions line up in columns.'],
@@ -766,7 +767,7 @@ AGAGTTTGATCCTGGCTCAGGATGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAGC...
         parts.push(box('blue', 'Aim', m.aim));
         if (m.intro) parts.push(m.intro);
         if (m.principle) parts.push(box('emerald', 'Principle (in simple words)', m.principle));
-        if (m.terms) parts.push(`<div class="no-print mb-8"><h3 class="text-lg font-bold border-b pb-2 mb-3">Key Terms</h3><dl class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">${m.terms.map(t => `<div class="bg-slate-50 border border-slate-200 rounded p-3"><dt class="font-semibold">${t[0]}</dt><dd class="text-slate-600">${t[1]}</dd></div>`).join('')}</dl></div>`);
+        if (m.principle) parts.push(`<p class="no-print text-sm text-slate-600 -mt-3 mb-8">📖 Unfamiliar word? <button type="button" onclick="showGlossary()" class="text-blue-600 hover:underline font-medium">Open the Glossary of Terms</button></p>`);
         parts.push(`<h3 class="text-lg font-bold border-b pb-2 mb-4">${m.id === 0 ? 'Setup Checklist' : 'Procedure'}</h3>`);
         parts.push(stepList(m.steps, `m${m.id}`));
         if (m.see) parts.push(box('violet', '👀 What you should see', m.see, 'no-print'));
@@ -977,6 +978,7 @@ AGAGTTTGATCCTGGCTCAGGATGAACGCTGGCGGCGTGCCTAATACATGCAAGTCGAGC...
 
     /* ---------- Glossary ---------- */
     function renderGlossary() {
+        GLOSSARY.sort((a, b) => a[0].localeCompare(b[0], 'en', { sensitivity: 'base' }));
         const q = document.getElementById('glossary-search').value.trim().toLowerCase();
         document.getElementById('glossary-list').innerHTML = GLOSSARY
             .filter(([t, d]) => !q || t.toLowerCase().includes(q) || d.toLowerCase().includes(q))
